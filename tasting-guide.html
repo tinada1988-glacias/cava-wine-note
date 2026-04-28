@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="テイスティング手順">
+  <meta name="theme-color" content="#8B2635">
+  <title>テイスティング実践手順 | 鈴木式・科学的アプローチ</title>
+  <style>
+    :root {
+      --wine-red: #8B2635;
+      --wine-light: #C4526A;
+      --wine-pale: #F9F0F2;
+      --gold: #C9A84C;
+      --gold-light: #FBF5E6;
+      --text: #2C2C2C;
+      --text-sub: #666;
+      --border: #E0D0D4;
+      --bg: #FAFAFA;
+      --step-bg: #fff;
+      --code-bg: #F4F0F1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    header {
+      background: var(--wine-red);
+      color: #fff;
+      padding: 28px 24px 20px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    header p {
+      font-size: 13px;
+      opacity: 0.8;
+      letter-spacing: 0.1em;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 16px 60px;
+    }
+
+    /* 準備セクション */
+    .prep {
+      background: var(--gold-light);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 18px;
+      margin: 24px 0 20px;
+    }
+    .prep h2 {
+      font-size: 14px;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    .prep ul {
+      list-style: none;
+      padding: 0;
+    }
+    .prep ul li {
+      font-size: 14px;
+      color: var(--text);
+      padding: 3px 0 3px 18px;
+      position: relative;
+    }
+    .prep ul li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-size: 12px;
+    }
+
+    /* STEPカード */
+    .step-card {
+      background: var(--step-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(139,38,53,0.08);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .step-header {
+      background: var(--wine-red);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .step-num {
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .step-sub {
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 2px;
+    }
+
+    .step-body {
+      padding: 18px 20px;
+    }
+
+    /* サブステップ */
+    .substep {
+      margin-bottom: 20px;
+    }
+    .substep:last-child { margin-bottom: 0; }
+
+    .substep-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--wine-red);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .substep-title .num {
+      background: var(--wine-pale);
+      color: var(--wine-red);
+      border-radius: 4px;
+      padding: 1px 7px;
+      font-size: 12px;
+    }
+
+    .note {
+      background: var(--wine-pale);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--wine-red);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    ul.list {
+      list-style: none;
+      padding: 0;
+    }
+    ul.list li {
+      padding: 4px 0 4px 20px;
+      position: relative;
+      font-size: 14px;
+      color: var(--text);
+    }
+    ul.list li::before {
+      content: '●';
+      position: absolute;
+      left: 0;
+      color: var(--wine-light);
+      font-size: 8px;
+      top: 10px;
+    }
+    ul.list li span.arrow {
+      color: var(--wine-red);
+      font-weight: 600;
+      margin: 0 2px;
+    }
+    ul.list li.indent {
+      padding-left: 36px;
+      color: var(--text-sub);
+      font-size: 13px;
+    }
+    ul.list li.indent::before {
+      left: 22px;
+      content: '–';
+      color: var(--text-sub);
+    }
+
+    /* アロママーカーテーブル */
+    .marker-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 12px 0;
+    }
+    .marker-table th {
+      background: var(--wine-red);
+      color: #fff;
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .marker-table th:first-child { border-radius: 6px 0 0 0; }
+    .marker-table th:last-child  { border-radius: 0 6px 0 0; }
+    .marker-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .marker-table tr:nth-child(even) td { background: var(--wine-pale); }
+    .marker-table tr:last-child td { border-bottom: none; }
+    .aroma-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-size: 12px;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .tag.red   { border-color: #C4526A; color: #C4526A; background: #FFF5F7; }
+    .tag.gold  { border-color: var(--gold); color: #8a6b20; background: var(--gold-light); }
+
+    /* 見分けポイント */
+    .tips {
+      background: #F0F4FF;
+      border-left: 3px solid #5C7CDE;
+      border-radius: 0 6px 6px 0;
+      padding: 12px 14px;
+      margin-top: 14px;
+    }
+    .tips p {
+      font-size: 13px;
+      font-weight: 700;
+      color: #3B5BBD;
+      margin-bottom: 6px;
+    }
+    .tips ul { list-style: none; padding: 0; }
+    .tips ul li {
+      font-size: 13px;
+      color: var(--text);
+      padding: 3px 0 3px 16px;
+      position: relative;
+    }
+    .tips ul li::before {
+      content: '💡';
+      position: absolute;
+      left: 0;
+      font-size: 11px;
+    }
+
+    /* アロマグループ */
+    .aroma-group {
+      margin-bottom: 14px;
+    }
+    .aroma-group-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+    .aroma-group .tag-list { display: flex; flex-wrap: wrap; gap: 4px; }
+
+    /* 推論フロー */
+    .logic-flow {
+      background: var(--code-bg);
+      border-radius: 8px;
+      padding: 16px 18px;
+      font-size: 13px;
+    }
+    .logic-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+    .logic-step:last-child { margin-bottom: 0; }
+    .logic-num {
+      background: var(--wine-red);
+      color: #fff;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .logic-content strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .logic-content span {
+      font-size: 13px;
+      color: var(--text-sub);
+    }
+    .logic-arrow {
+      text-align: center;
+      color: var(--wine-light);
+      font-size: 18px;
+      margin: 4px 0;
+    }
+
+    /* チェックリスト */
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist .box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--wine-red);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* 仕切り */
+    hr { border: none; border-top: 1px solid var(--border); margin: 6px 0 16px; }
+
+    /* 舌マップ */
+    .tongue-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .tongue-item {
+      background: var(--wine-pale);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+    .tongue-item strong {
+      display: block;
+      color: var(--wine-red);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 12px;
+      padding: 20px;
+    }
+
+    @media (max-width: 480px) {
+      header h1 { font-size: 18px; }
+      .step-title { font-size: 14px; }
+      .tongue-map { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>テイスティング実践手順</h1>
+  <p>鈴木式・科学的アプローチ</p>
+</header>
+
+<div class="container">
+
+  <!-- 準備 -->
+  <div class="prep">
+    <h2>■ 準備</h2>
+    <ul>
+      <li>グラス：ユニバーサルテイスティンググラス（ISO規格）を推奨</li>
+      <li>温度：赤 16〜18℃ ／ 白 10〜12℃</li>
+      <li>背景：白い紙や壁を用意（外観観察用）</li>
+      <li>ノート：04_テイスティングノート_記入用 を開いておく</li>
+      <li>参考資料：03_テイスティング参考資料 を手元に置く</li>
+    </ul>
+  </div>
+
+  <!-- STEP 1 外観 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">外観を観察する</div>
+        <div class="step-sub">グラスを持ち上げ、白い背景の前で観察する</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">1-1</span> 色調を確認する</div>
+        <p style="font-size:14px; margin-bottom:8px;">グラスを白い背景に対して <strong>45度</strong> に傾ける。</p>
+        <ul class="list">
+          <li>中心部の色 <span class="arrow">→</span> 色調を特定（レモン・ゴールド・ルビー・ガーネット等）</li>
+          <li>エッジ（縁）の色 <span class="arrow">→</span> 熟成度の確認</li>
+          <li class="indent">エッジが無色〜薄い：若いワイン</li>
+          <li class="indent">エッジがオレンジ・レンガ：熟成あり</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">1-2</span> 濃淡を確認する</div>
+        <ul class="list">
+          <li>上から覗き込んで液体の濃さを見る</li>
+          <li>淡い <span class="arrow">→</span> ピノ・ノワール系　／　濃い <span class="arrow">→</span> カベルネ系　の第一手がかり</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">1-3</span> 輝きを確認する</div>
+        <ul class="list">
+          <li>光に透かして輝きを見る</li>
+          <li>輝きが強い <span class="arrow">→</span> 酸度が高い・健全なワイン</li>
+          <li>輝きが鈍い <span class="arrow">→</span> 酸度が低い・酸化の可能性</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">1-4</span> 粘性を確認する</div>
+        <ul class="list">
+          <li>グラスをゆっくり回し、側面を流れる「脚」を観察する</li>
+          <li>脚が遅い・多い <span class="arrow">→</span> アルコール or 残糖が高い</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 2 香り -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">香りを嗅ぐ</div>
+        <div class="step-sub">スワリング前 → スワリング後 → 成分同定 → 熟成読み取り</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">2-1</span> 第1印象（スワリング前）</div>
+        <p style="font-size:14px; margin-bottom:8px;">グラスを <strong>回さずに</strong> 鼻を近づけて嗅ぐ。</p>
+        <ul class="list">
+          <li>チオール系（柑橘・パッション）やテルペン系（花・ライチ）は揮発性が高く、ここで感じやすい</li>
+          <li>欠陥臭（コルク臭・酢・硫黄）があればここで気づく</li>
+          <li>第一印象をノートにメモする</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">2-2</span> スワリング後</div>
+        <p style="font-size:14px; margin-bottom:8px;">テーブルの上で <strong>円を描くように10〜15秒</strong> 回す。</p>
+        <ul class="list">
+          <li>液体を空気に触れさせ、香気成分を揮発させる</li>
+          <li>再度鼻を近づけ、変化した香りを確認する</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">2-3</span> 成分マーカーを同定する</div>
+        <div class="note">「何の香り」ではなく「何の分子系か」を意識して嗅ぐ。品種特定の核心。</div>
+
+        <table class="marker-table">
+          <thead>
+            <tr>
+              <th>成分系</th>
+              <th>感じる香り</th>
+              <th>品種候補</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>チオール系</strong></td>
+              <td>
+                <div class="aroma-tags">
+                  <span class="tag">グレープフルーツ</span>
+                  <span class="tag">パッションフルーツ</span>
+                  <span class="tag">白スグリ</span>
+                  <span class="tag">柚子</span>
+                  <span class="tag">ライム</span>
+                  <span class="tag">猫のおしっこ</span>
+                </div>
+              </td>
+              <td>SB・甲州・ソーヴィニヨン・グリ</td>
+            </tr>
+            <tr>
+              <td><strong>テルペン系</strong></td>
+              <td>
+                <div class="aroma-tags">
+                  <span class="tag">ライチ</span>
+                  <span class="tag">バラ</span>
+                  <span class="tag">ジャスミン</span>
+                  <span class="tag">アカシア</span>
+                  <span class="tag">白い花</span>
+                  <span class="tag">生姜</span>
+                  <span class="tag">ローズウォーター</span>
+                </div>
+              </td>
+              <td>ゲヴュルツ・リースリング・マスカット・ヴィオニエ</td>
+            </tr>
+            <tr>
+              <td><strong>ピラジン系</strong></td>
+              <td>
+                <div class="aroma-tags">
+                  <span class="tag">ピーマン</span>
+                  <span class="tag">アスパラガス</span>
+                  <span class="tag">杉</span>
+                  <span class="tag">青草</span>
+                  <span class="tag">緑のトマト</span>
+                  <span class="tag">枝豆</span>
+                </div>
+              </td>
+              <td>カベルネ系・冷涼のSB</td>
+            </tr>
+            <tr>
+              <td><strong>ロータンドン系</strong></td>
+              <td>
+                <div class="aroma-tags">
+                  <span class="tag">黒コショウ</span>
+                  <span class="tag">白コショウ</span>
+                  <span class="tag">温かいスパイス</span>
+                </div>
+              </td>
+              <td>シラー・グリューナー・ヴェルトリーナー</td>
+            </tr>
+            <tr>
+              <td><strong>TDN</strong></td>
+              <td>
+                <div class="aroma-tags">
+                  <span class="tag">石油</span>
+                  <span class="tag">ペトロール</span>
+                  <span class="tag">灯油</span>
+                  <span class="tag">ワックス</span>
+                </div>
+              </td>
+              <td>リースリング（熟成）</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="tips">
+          <p>見分けのポイント</p>
+          <ul>
+            <li>チオール vs テルペン：刺すような柑橘感はチオール、花・ライチの甘さはテルペン</li>
+            <li>ピラジン：生のピーマン・草のような青さが特徴。調理したピーマンとは違う</li>
+            <li>TDN vs 還元臭：TDNは石油・灯油のニュアンスで消えない。スワリングで消えるなら還元臭</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">2-4</span> 第2・第3アロマを確認する</div>
+
+        <div class="aroma-group">
+          <div class="aroma-group-title">第2アロマ（醸造の痕跡）</div>
+          <ul class="list">
+            <li>
+              <div class="aroma-tags" style="display:inline-flex; flex-wrap:wrap; gap:4px; margin-right:6px;">
+                <span class="tag gold">バター</span>
+                <span class="tag gold">ヨーグルト</span>
+                <span class="tag gold">クリーム</span>
+              </div>
+              <span class="arrow">→</span> MLFあり（リンゴ酸 → 乳酸）
+            </li>
+            <li>
+              <div class="aroma-tags" style="display:inline-flex; flex-wrap:wrap; gap:4px; margin-right:6px;">
+                <span class="tag gold">パン生地</span>
+                <span class="tag gold">ブリオッシュ</span>
+                <span class="tag gold">ビスケット</span>
+              </div>
+              <span class="arrow">→</span> 澱熟成（シュール・リー）
+            </li>
+            <li>
+              <div class="aroma-tags" style="display:inline-flex; flex-wrap:wrap; gap:4px; margin-right:6px;">
+                <span class="tag">硫黄</span>
+                <span class="tag">マッチ</span>
+                <span class="tag">ゆで卵</span>
+              </div>
+              <span class="arrow">→</span> 還元。スワリングで消えれば問題なし
+            </li>
+          </ul>
+        </div>
+
+        <div class="aroma-group">
+          <div class="aroma-group-title">第3アロマ（熟成の深さ）</div>
+          <ul class="list">
+            <li>
+              <div class="aroma-tags" style="display:inline-flex; flex-wrap:wrap; gap:4px; margin-right:6px;">
+                <span class="tag red">バニラ</span>
+                <span class="tag red">トースト</span>
+                <span class="tag red">スモーク</span>
+                <span class="tag red">コーヒー</span>
+                <span class="tag red">ダークチョコ</span>
+              </div>
+              <span class="arrow">→</span> 木樽熟成（新樽率・トースト度）
+            </li>
+            <li>
+              <div class="aroma-tags" style="display:inline-flex; flex-wrap:wrap; gap:4px; margin-right:6px;">
+                <span class="tag red">ナッツ</span>
+                <span class="tag red">蜂蜜</span>
+                <span class="tag red">マーマレード</span>
+                <span class="tag red">キャラメル</span>
+              </div>
+              <span class="arrow">→</span> 酸化熟成
+            </li>
+            <li>
+              <div class="aroma-tags" style="display:inline-flex; flex-wrap:wrap; gap:4px; margin-right:6px;">
+                <span class="tag red">キノコ</span>
+                <span class="tag red">腐葉土</span>
+                <span class="tag red">トリュフ</span>
+                <span class="tag red">革</span>
+                <span class="tag red">タバコ</span>
+                <span class="tag red">紅茶</span>
+              </div>
+              <span class="arrow">→</span> 長期瓶熟成。ヴィンテージを古めに推測する根拠
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 3 味わい -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">味わいを分析する</div>
+        <div class="step-sub">口に含み、舌全体に広げる。軽く空気を巻き込む（チュルチュル）</div>
+      </div>
+    </div>
+    <div class="step-body">
+
+      <div class="tongue-map">
+        <div class="tongue-item">
+          <strong>舌の先端</strong>
+          甘み（残糖）を感じる。まずドライかどうかを判断する。
+        </div>
+        <div class="tongue-item">
+          <strong>舌の縁（横）</strong>
+          酸味を感じる。強さと質（リンゴ酸 or 乳酸）を分ける。
+        </div>
+        <div class="tongue-item">
+          <strong>歯茎・口全体</strong>
+          タンニンの収斂感（赤のみ）。量と質感を評価する。
+        </div>
+        <div class="tongue-item">
+          <strong>喉の熱感</strong>
+          アルコール感。外観の粘性と照合する。
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">3-1</span> 甘みを確認する</div>
+        <ul class="list">
+          <li>ドライ（2g/L以下）かどうかを最初に判断</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">3-2</span> 酸味を確認する</div>
+        <ul class="list">
+          <li>強さと質を必ず分けて評価する</li>
+          <li class="indent">鋭くシャープ <span class="arrow">→</span> リンゴ酸主体（冷涼産地・MLFなし）</li>
+          <li class="indent">柔らかく丸い <span class="arrow">→</span> 乳酸主体（MLFあり）</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">3-3</span> タンニンを確認する（赤のみ）</div>
+        <ul class="list">
+          <li>歯茎・口の中の収斂感で量を判断</li>
+          <li class="indent">ベルベット・シルキー <span class="arrow">→</span> 果皮タンニンが完熟</li>
+          <li class="indent">ザラつく・荒い <span class="arrow">→</span> 未熟 or 強抽出</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">3-4</span> アルコールを確認する</div>
+        <ul class="list">
+          <li>喉の熱感・ボリューム感で判断</li>
+          <li>外観の粘性と照合して一致しているか確認する</li>
+        </ul>
+      </div>
+
+      <div class="substep">
+        <div class="substep-title"><span class="num">3-5</span> フィニッシュを確認する</div>
+        <ul class="list">
+          <li>飲み込んだ後、香りと味わいが続く時間を測る</li>
+          <li>20秒以上 <span class="arrow">→</span> 高品質なワインの指標</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 4 推論 -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">推論マトリックス</div>
+        <div class="step-sub">集めた証拠を統合して品種・産地を特定する</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="logic-flow">
+        <div class="logic-step">
+          <div class="logic-num">1</div>
+          <div class="logic-content">
+            <strong>外観の濃淡 ＋ タンニンの量</strong>
+            <span>果皮の厚さを推定 → 品種群を3つ程度に絞る</span>
+          </div>
+        </div>
+        <div class="logic-arrow">↓</div>
+        <div class="logic-step">
+          <div class="logic-num">2</div>
+          <div class="logic-content">
+            <strong>香気成分のマーカー</strong>
+            <span>チオール・テルペン・ピラジン等で品種を1〜2に絞る</span>
+          </div>
+        </div>
+        <div class="logic-arrow">↓</div>
+        <div class="logic-step">
+          <div class="logic-num">3</div>
+          <div class="logic-content">
+            <strong>酸 × アルコールの座標</strong>
+            <span>気候帯（冷涼 / 中間 / 温暖）を決定 → Step 2の品種と矛盾がないか検証</span>
+          </div>
+        </div>
+        <div class="logic-arrow">↓</div>
+        <div class="logic-step">
+          <div class="logic-num" style="background:var(--gold);">→</div>
+          <div class="logic-content">
+            <strong>品種 / 国 / 地域 / ヴィンテージ / 価格帯 を記入</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 答え合わせ -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">5</div>
+      <div>
+        <div class="step-title">答え合わせとフィードバック</div>
+        <div class="step-sub">「なんとなく違った」ではなく物理量のズレを特定する</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ul class="list">
+        <li>ラベル・Vivinoで正解を確認する</li>
+        <li>外れた場合、どの成分・物理量を読み違えたかを言語化する</li>
+        <li class="indent">例：「タンニンが多かったのにピノと判断した → 濃淡を見落としていた」</li>
+        <li>次回の修正ポイントを1行でノートに記録する</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- チェックリスト -->
+  <div class="step-card">
+    <div class="step-header" style="background: var(--gold);">
+      <div class="step-num" style="background:rgba(0,0,0,0.15);">✓</div>
+      <div>
+        <div class="step-title">実践チェックリスト</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li><div class="box"></div> 白い背景を準備した</li>
+        <li><div class="box"></div> グラスを傾けて色調・エッジを確認した</li>
+        <li><div class="box"></div> スワリング前に香りを嗅いだ</li>
+        <li><div class="box"></div> スワリング後に成分マーカーを同定した</li>
+        <li><div class="box"></div> 酸の「強さ」と「質」を分けて評価した</li>
+        <li><div class="box"></div> Step 1→2→3 の順番で推論した</li>
+        <li><div class="box"></div> 外れた原因を成分・物理量レベルで言語化した</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>鈴木明人『科学的アプローチからワインを理解して品種を当てる』（2024）準拠</footer>
+
+</body>
+</html>
