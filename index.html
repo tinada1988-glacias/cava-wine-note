@@ -1,521 +1,1252 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="厨房マニュアル">
-  <title>メディケアビレッジ柏島 厨房完全マニュアル</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { -webkit-tap-highlight-color: transparent; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .tab-btn.active { background-color: #1e293b; color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transform: scale(1.05); }
-    .tab-btn { background: white; color: #64748b; border: 1px solid #e2e8f0; transition: all 0.2s; }
-    .tab-btn:hover { background: #f1f5f9; }
-    .timeline-dot { position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; border: 4px solid white; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Cava">
+<meta name="theme-color" content="#8B1A2A">
+<title>Cava - テイスティングノート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--wine:#8B1A2A;--wine-light:#f5e8ea;--border:#e2e2e2;--text:#1a1a1a;--text2:#888;--bg:#fafafa;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Noto Sans JP',sans-serif;background:#fff;color:var(--text);font-size:14px;max-width:480px;margin:0 auto;position:relative;}
+.app{height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+.page{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.page.on{display:flex;flex-direction:column;}
+
+/* LIST */
+.list-hdr{padding:env(safe-area-inset-top,16px) 16px 10px;padding-top:calc(env(safe-area-inset-top,0px) + 16px);background:#fff;flex-shrink:0;}
+.list-hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.list-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:400;color:var(--wine);}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:24px;padding:9px 14px;}
+.search-bar input{flex:1;border:none;background:transparent;font-size:14px;font-family:'Noto Sans JP',sans-serif;color:var(--text);outline:none;}
+.filter-row{display:flex;gap:8px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fchip{white-space:nowrap;border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;background:#fff;color:var(--text2);font-family:'Noto Sans JP',sans-serif;transition:all .15s;}
+.fchip.on{background:var(--wine);border-color:var(--wine);color:#fff;}
+.notes-list{padding:10px 16px;flex:1;}
+.note-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:13px;margin-bottom:10px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;transition:border-color .15s;}
+.note-card:active{border-color:var(--wine);}
+.note-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--bg);border:1px solid var(--border);}
+.note-thumb-placeholder{width:52px;height:52px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.note-bar{width:5px;border-radius:4px;flex-shrink:0;align-self:stretch;min-height:52px;}
+.note-body{flex:1;min-width:0;}
+.note-name{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.note-meta{font-size:11px;color:var(--text2);margin-bottom:6px;}
+.note-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px;}
+.ntag{font-size:10px;padding:2px 8px;border-radius:12px;}
+.note-aroma{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.note-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.note-stars{color:#c9a830;font-size:11px;letter-spacing:1px;}
+.note-date{font-size:10px;color:var(--text2);}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 30px;text-align:center;flex:1;}
+.empty svg{width:60px;height:60px;margin-bottom:18px;}
+.empty h2{font-size:19px;font-weight:500;margin-bottom:8px;}
+.empty p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:24px;}
+.empty-btn{background:var(--text);color:#fff;border:none;border-radius:12px;padding:13px 0;font-size:15px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;font-weight:500;width:100%;max-width:300px;}
+.fab-wrap{padding:12px 16px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);background:#fff;border-top:1px solid var(--border);flex-shrink:0;}
+.fab{display:block;width:100%;background:var(--wine);color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;font-weight:500;box-shadow:0 4px 20px rgba(139,26,42,.25);}
+
+/* SHARED HEADER */
+.pg-hdr{background:#fff;border-bottom:1px solid var(--border);padding:12px 16px;padding-top:calc(env(safe-area-inset-top,0px) + 12px);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;position:sticky;top:0;z-index:50;}
+.pg-hdr-title{font-size:15px;font-weight:500;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 8px;}
+.back-btn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text2);padding:0;line-height:1;flex-shrink:0;}
+.del-btn{background:#fdf0f0;color:var(--wine);border:1px solid #f0c0c0;border-radius:8px;padding:5px 10px;font-size:12px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;flex-shrink:0;}
+.save-btn{background:var(--wine);color:#fff;border:none;border-radius:20px;padding:7px 16px;font-size:13px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;font-weight:500;}
+
+/* DETAIL */
+.detail-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 20px;}
+.detail-photo{width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-bottom:14px;display:block;}
+.detail-wine-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;line-height:1.3;margin-bottom:6px;}
+.detail-meta{font-size:12px;color:var(--text2);margin-bottom:8px;}
+.d-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.d-sec{background:var(--bg);border-radius:12px;padding:12px;margin-bottom:12px;}
+.d-sec-title{font-size:11px;color:var(--text2);letter-spacing:.06em;margin-bottom:8px;}
+.d-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:.5px solid #ebebeb;font-size:13px;}
+.d-row:last-child{border-bottom:none;}
+.d-row-lbl{color:var(--text2);}
+.d-row-val{font-weight:500;}
+.d-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.d-chip{border:1px solid var(--border);border-radius:14px;padding:4px 10px;font-size:12px;color:var(--text2);}
+.edit-fab-wrap{padding:12px 14px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);background:#fff;border-top:1px solid var(--border);flex-shrink:0;}
+.edit-fab{display:block;width:100%;background:var(--text);color:#fff;border:none;border-radius:14px;padding:14px;font-size:15px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;font-weight:500;}
+
+/* FORM */
+.form-hdr{background:#fff;border-bottom:1px solid var(--border);padding:12px 16px 0;padding-top:calc(env(safe-area-inset-top,0px) + 12px);flex-shrink:0;}
+.form-hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.tabs{display:flex;}
+.tab{flex:1;background:none;border:none;padding:8px 2px;font-size:10px;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;font-family:'Noto Sans JP',sans-serif;display:flex;flex-direction:column;align-items:center;gap:2px;transition:all .15s;}
+.tab.on{color:var(--wine);border-bottom-color:var(--wine);}
+.tab-icon{font-size:16px;line-height:1;}
+.form-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.screen{display:none;padding:14px 14px 20px;}.screen.on{display:block;}
+.sec{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;}
+.sec-title{font-size:15px;font-weight:500;margin-bottom:12px;}
+.field{margin-bottom:12px;}
+.lbl{font-size:11px;color:var(--text2);margin-bottom:5px;}
+.inp{width:100%;border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:14px;font-family:'Noto Sans JP',sans-serif;color:var(--text);background:#fff;outline:none;-webkit-appearance:none;transition:border-color .15s;}
+.inp:focus{border-color:var(--wine);}
+textarea.inp{resize:vertical;min-height:70px;line-height:1.6;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* PHOTO UPLOAD */
+.photo-upload-area{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;}
+.photo-preview-wrap{position:relative;flex-shrink:0;}
+.photo-preview{width:90px;height:90px;border-radius:12px;object-fit:cover;display:block;}
+.photo-placeholder{width:90px;height:90px;border-radius:12px;background:var(--bg);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;font-size:10px;color:var(--text2);}
+.photo-placeholder span.icon{font-size:26px;}
+.photo-remove{position:absolute;top:-6px;right:-6px;background:var(--wine);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.photo-btns{display:flex;flex-direction:column;gap:8px;justify-content:center;}
+.photo-action-btn{border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:13px;cursor:pointer;background:#fff;font-family:'Noto Sans JP',sans-serif;color:var(--text);font-weight:400;text-align:left;display:flex;align-items:center;gap:8px;}
+.photo-action-btn:active{background:var(--bg);}
+input[type=file]{display:none;}
+
+.seg-group{margin-bottom:12px;}
+.seg-lbl{font-size:11px;color:var(--text2);margin-bottom:6px;}
+.seg{display:flex;gap:7px;flex-wrap:wrap;}
+.seg-btn{border:1px solid var(--border);border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;background:#fff;font-family:'Noto Sans JP',sans-serif;color:var(--text);font-weight:500;transition:all .12s;-webkit-appearance:none;}
+.seg-btn.on{background:var(--text);color:#fff;border-color:var(--text);}
+.chip-group{margin-bottom:10px;}
+.cg-lbl{font-size:11px;color:var(--text2);margin-bottom:6px;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{border:1.5px solid var(--border);border-radius:20px;padding:5px 11px;font-size:12px;cursor:pointer;background:#fff;font-family:'Noto Sans JP',sans-serif;color:#888;transition:all .12s;}
+.chip.floral{border-color:#6B3FA0;color:#6B3FA0;}.chip.floral.on{background:#6B3FA0;color:#fff;}
+.chip.gfruit{border-color:#2E7D52;color:#2E7D52;}.chip.gfruit.on{background:#2E7D52;color:#fff;}
+.chip.citrus{border-color:#c08000;color:#c08000;}.chip.citrus.on{background:#c08000;color:#fff;}
+.chip.stone{border-color:#C05000;color:#C05000;}.chip.stone.on{background:#C05000;color:#fff;}
+.chip.tropical{border-color:#c05800;color:#c05800;}.chip.tropical.on{background:#c05800;color:#fff;}
+.chip.rfruit{border-color:#c0282a;color:#c0282a;}.chip.rfruit.on{background:#c0282a;color:#fff;}
+.chip.bfruit{border-color:#6B3FA0;color:#6B3FA0;}.chip.bfruit.on{background:#6B3FA0;color:#fff;}
+.chip.herb{border-color:#2E7D52;color:#2E7D52;}.chip.herb.on{background:#2E7D52;color:#fff;}
+.chip.herbal{border-color:#1A6B6B;color:#1A6B6B;}.chip.herbal.on{background:#1A6B6B;color:#fff;}
+.chip.yeast{border-color:#b08000;color:#b08000;}.chip.yeast.on{background:#b08000;color:#fff;}
+.chip.oak{border-color:#c07000;color:#c07000;}.chip.oak.on{background:#c07000;color:#fff;}
+.chip.tertred{border-color:#8B1A2A;color:#8B1A2A;}.chip.tertred.on{background:#8B1A2A;color:#fff;}
+.chip.tertwhite{border-color:#b07820;color:#b07820;}.chip.tertwhite.on{background:#b07820;color:#fff;}
+.chip.rfruit2{border-color:#c9667a;color:#c9667a;}.chip.rfruit2.on{background:#c9667a;color:#fff;}
+.divider{border:none;border-top:1px solid #f0f0f0;margin:12px 0;}
+.sec-sub{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:8px;}
+.cc-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+.cc-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;}
+.cc-dot{width:42px;height:42px;border-radius:50%;border:3px solid transparent;transition:border-color .15s;}
+.cc-dot.on{border-color:#1a1a1a;}
+.cc-lbl{font-size:10px;color:var(--text2);}
+.stars-row{display:flex;gap:5px;}
+.star{font-size:30px;cursor:pointer;color:#ddd;transition:color .1s;line-height:1;}
+.star.on{color:#c9a830;}
+.q-btns{display:flex;gap:7px;flex-wrap:wrap;}
+.q-btn{border:1px solid var(--border);border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;background:#fff;font-family:'Noto Sans JP',sans-serif;font-weight:500;transition:all .12s;}
+.q-btn.on{background:var(--wine);color:#fff;border-color:var(--wine);}
+.save-full-btn{width:100%;padding:14px;background:var(--wine);color:#fff;border:none;border-radius:12px;font-size:15px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;font-weight:500;margin-top:6px;}
+.form-bottom-pad{height:calc(env(safe-area-inset-bottom,0px) + 20px);}
+/* WINE SEARCH OVERLAY */
+.ws-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end;}
+.ws-overlay.on{display:flex;}
+.ws-sheet{background:#fff;width:100%;max-height:80vh;border-radius:20px 20px 0 0;overflow:hidden;display:flex;flex-direction:column;}
+.ws-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.ws-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text2);line-height:1;padding:0;}
+.ws-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px;}
+.ws-foot{padding:12px 14px;border-top:1px solid var(--border);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);flex-shrink:0;}
+.ws-card{border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;-webkit-tap-highlight-color:transparent;}
+.ws-card:active{border-color:var(--wine);background:var(--wine-light);}
+.ws-card-name{font-size:14px;font-weight:500;margin-bottom:3px;}
+.ws-card-desc{font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.5;}
+.ws-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.ws-tag{font-size:11px;padding:3px 8px;border-radius:10px;background:var(--bg);color:var(--text2);}
+.ws-name-row{display:flex;gap:8px;align-items:center;}
+.ws-search-btn{flex-shrink:0;background:var(--wine);color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:13px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;white-space:nowrap;}
+.ws-google-btn{width:100%;border:1px solid var(--border);background:#fff;border-radius:10px;padding:11px;font-size:13px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;color:var(--text2);}
+/* PWA INSTALL */
+.install-btn{background:none;border:1px solid rgba(139,26,42,.3);border-radius:20px;padding:5px 10px;font-size:11px;color:var(--wine);font-family:'Noto Sans JP',sans-serif;cursor:pointer;white-space:nowrap;}
+.install-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:flex-end;}
+.install-overlay.on{display:flex;}
+.install-sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;padding:20px 20px calc(env(safe-area-inset-bottom,0px) + 24px);}
+.install-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+.install-step-num{width:24px;height:24px;border-radius:50%;background:var(--wine);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.install-step-txt{font-size:13px;line-height:1.6;color:var(--text);}
+.install-close{width:100%;background:var(--bg);border:none;border-radius:12px;padding:13px;font-size:14px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;margin-top:6px;}
+</style>
 </head>
-<body class="min-h-screen bg-slate-50 font-sans">
+<body>
+<div class="app" id="app">
 
-  <!-- ヘッダー -->
-  <header class="max-w-5xl mx-auto pt-4 px-4 pb-0 mb-6">
-    <div class="flex items-start justify-between bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-      <div>
-        <h1 class="text-xl font-black text-slate-900 tracking-tight leading-tight">メディケアビレッジ柏島<br>厨房完全マニュアル</h1>
-        <p class="text-slate-500 text-xs mt-1">現場従業員ヒアリング・読み上げ原稿 準拠版</p>
-      </div>
-      <div class="text-right flex-shrink-0 ml-2">
-        <span class="text-xs font-bold text-slate-400 block uppercase">Rev.</span>
-        <span class="text-xs font-mono font-bold">2026.04.24</span>
+<!-- LIST PAGE -->
+<div class="page on" id="page-list">
+  <div class="list-hdr">
+    <div class="list-hdr-row">
+      <div class="list-title">🍷 Cava</div>
+      <button class="install-btn" id="install-btn" onclick="showInstallGuide()" style="display:none;">📲 ホーム画面に追加</button>
+    </div>
+    <div class="search-bar">
+      <span style="color:var(--text2);">🔍</span>
+      <input type="text" placeholder="ノートを検索..." id="search-inp" oninput="renderList()" />
+    </div>
+  </div>
+  <div class="filter-row">
+    <span class="fchip on" onclick="setFilter('all',this)">すべて</span>
+    <span class="fchip" onclick="setFilter('赤',this)">赤ワイン</span>
+    <span class="fchip" onclick="setFilter('白',this)">白ワイン</span>
+    <span class="fchip" onclick="setFilter('ロゼ',this)">ロゼ</span>
+    <span class="fchip" onclick="setFilter('スパークリング',this)">スパークリング</span>
+  </div>
+  <div id="list-body" style="flex:1;overflow-y:auto;"></div>
+  <div class="fab-wrap">
+    <button class="fab" onclick="openForm(null)">＋ 新しいノートを作成</button>
+  </div>
+</div>
+
+<!-- DETAIL PAGE -->
+<div class="page" id="page-detail">
+  <div class="pg-hdr">
+    <button class="back-btn" onclick="showPage('list')">←</button>
+    <div class="pg-hdr-title" id="d-hdr-name"></div>
+    <button class="del-btn" onclick="doDelete()">削除</button>
+  </div>
+  <div class="detail-scroll" id="detail-body"></div>
+  <div class="edit-fab-wrap">
+    <button class="edit-fab" onclick="openForm(viewingId)">✏️ 編集する</button>
+  </div>
+</div>
+
+<!-- FORM PAGE -->
+<div class="page" id="page-form">
+  <div class="form-hdr">
+    <div class="form-hdr-top">
+      <button class="back-btn" onclick="showPage('list')">←</button>
+      <div class="pg-hdr-title" id="form-pg-title">新しいノート</div>
+      <button class="save-btn" onclick="saveNote()">保存</button>
+    </div>
+    <div class="tabs">
+      <button class="tab on" onclick="goTab(0,this)"><span class="tab-icon">🏷️</span><span>基本</span></button>
+      <button class="tab" onclick="goTab(1,this)"><span class="tab-icon">👁️</span><span>外観</span></button>
+      <button class="tab" onclick="goTab(2,this)"><span class="tab-icon">👃</span><span>香り</span></button>
+      <button class="tab" onclick="goTab(3,this)"><span class="tab-icon">👄</span><span>味わい</span></button>
+      <button class="tab" onclick="goTab(4,this)"><span class="tab-icon">🎖️</span><span>総評</span></button>
+    </div>
+  </div>
+  <div class="form-scroll">
+
+    <!-- sc0 基本情報 -->
+    <div class="screen on" id="sc0">
+      <div class="sec">
+        <div class="sec-title">基本情報</div>
+
+        <!-- 写真アップロード -->
+        <div class="field">
+          <div class="lbl">ラベル写真</div>
+          <div class="photo-upload-area">
+            <div class="photo-preview-wrap">
+              <div class="photo-placeholder" id="photo-placeholder" onclick="document.getElementById('file-input-gallery').click()">
+                <span class="icon">📷</span>
+                <span>写真を追加</span>
+              </div>
+              <img class="photo-preview" id="photo-preview" src="" style="display:none;" />
+              <button class="photo-remove" id="photo-remove" onclick="removePhoto()" style="display:none;">✕</button>
+            </div>
+            <div class="photo-btns">
+              <button class="photo-action-btn" onclick="document.getElementById('file-input-gallery').click()">
+                <span>🖼️</span><span>フォトから選択</span>
+              </button>
+              <button class="photo-action-btn" onclick="document.getElementById('file-input-camera').click()">
+                <span>📸</span><span>カメラで撮影</span>
+              </button>
+              <button class="photo-action-btn" onclick="openLensSearch()">
+                <span>🔍</span><span>Lensで検索</span>
+              </button>
+            </div>
+          </div>
+          <input type="file" id="file-input-gallery" accept="image/*" onchange="handlePhoto(this)">
+          <input type="file" id="file-input-camera" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+        </div>
+
+        <div class="field"><div class="lbl">ワイン名 *</div>
+          <div class="ws-name-row">
+            <input class="inp" id="f-name" placeholder="例：Château Margaux 2018" style="flex:1;"/>
+            <button class="ws-search-btn" onclick="openWineSearch()">🔍 検索</button>
+          </div>
+        </div>
+        <div class="field"><div class="lbl">生産者</div><input class="inp" id="f-producer" placeholder="例：Château Margaux"/></div>
+        <div class="row2">
+          <div class="field"><div class="lbl">国</div><input class="inp" id="f-country" placeholder="例：フランス"/></div>
+          <div class="field"><div class="lbl">地域</div><input class="inp" id="f-region" placeholder="例：ボルドー"/></div>
+        </div>
+        <div class="field"><div class="lbl">ぶどう品種</div><input class="inp" id="f-grape" placeholder="例：カベルネ・ソーヴィニヨン"/></div>
+        <div class="row2">
+          <div class="field"><div class="lbl">ヴィンテージ</div><input class="inp" id="f-vintage" placeholder="例：2018"/></div>
+          <div class="field"><div class="lbl">アルコール度数</div><input class="inp" id="f-alc" placeholder="例：13.5%"/></div>
+        </div>
+        <div class="row2">
+          <div class="field"><div class="lbl">価格帯</div>
+            <select class="inp" id="f-price">
+              <option value="">—</option><option>〜¥3,000</option><option>¥3,000〜5,000</option>
+              <option>¥5,000〜10,000</option><option>¥10,000〜30,000</option><option>¥30,000〜</option>
+            </select>
+          </div>
+          <div class="field"><div class="lbl">飲んだ日</div><input class="inp" type="date" id="f-date"/></div>
+        </div>
       </div>
     </div>
 
-    <!-- タブナビゲーション -->
-    <nav class="flex flex-wrap gap-2 mt-4">
-      <button class="tab-btn active flex items-center gap-1 px-3 py-2 rounded-full font-bold text-sm" onclick="switchTab('flow', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        1日の流れ
-      </button>
-      <button class="tab-btn flex items-center gap-1 px-3 py-2 rounded-full font-bold text-sm" onclick="switchTab('cooking', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="6.34" y1="17.66" x2="4.93" y2="19.07"/><line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/></svg>
-        調理・炊飯
-      </button>
-      <button class="tab-btn flex items-center gap-1 px-3 py-2 rounded-full font-bold text-sm" onclick="switchTab('cleaning', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        清掃・保守
-      </button>
-      <button class="tab-btn flex items-center gap-1 px-3 py-2 rounded-full font-bold text-sm" onclick="switchTab('admin', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-        事務・月次
-      </button>
-      <button class="tab-btn flex items-center gap-1 px-3 py-2 rounded-full font-bold text-sm" onclick="switchTab('hygiene', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        衛生・心得
-      </button>
-    </nav>
-  </header>
+    <!-- sc1 外観 -->
+    <div class="screen" id="sc1">
+      <div class="sec">
+        <div class="sec-title">外観</div>
 
-  <main class="max-w-5xl mx-auto px-4 pb-8">
-
-    <!-- ============ 1日の流れ ============ -->
-    <div id="tab-flow" class="tab-content active">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-        <!-- 朝 -->
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-orange-400 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="6.34" y1="17.66" x2="4.93" y2="19.07"/><line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">朝の業務 (06:00〜)</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">06:00</div>
-              <div><div class="font-bold text-gray-800">入室・手洗い</div><div class="text-xs text-gray-500 mt-1">1分間手洗い・爪ブラシ使用。連絡帳・食事箋確認、炊飯タイマー2台確認、気温ノート2冊記入。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-red-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">06:10</div>
-              <div><div class="font-bold text-red-700">機器起動</div><div class="text-xs text-gray-500 mt-1">T-fal、ガス、スチコン、ボイラー、AC、洗浄機(元栓2つ)。スチコンはワンタッチパスタ画面押し。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">06:20</div>
-              <div><div class="font-bold text-gray-800">食材準備</div><div class="text-xs text-gray-500 mt-1">レシピ確認。温める・温めない・ソフト・ミキサー・ゼリーに分類。バットへ。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">06:40</div>
-              <div><div class="font-bold text-gray-800">盛り付け</div><div class="text-xs text-gray-500 mt-1">卵焼き・肉団子等。ご飯が炊け次第、保存食採取。</div></div>
-            </div>
-            <div class="mt-3 p-2 bg-slate-50 text-xs text-slate-500 rounded border border-slate-100 font-bold uppercase tracking-wider">
-              朝の出庫 07:30 / 返却 08:20〜25
-            </div>
+        <!-- 色（ビジュアル選択） -->
+        <div class="field"><div class="lbl">色</div>
+          <div class="cc-row">
+            <div class="cc-item" onclick="pickColor('#F5E6A0','白')"><div class="cc-dot" id="cc-白" style="background:#F5E6A0;border:1px solid #d4c060;"></div><span class="cc-lbl">白</span></div>
+            <div class="cc-item" onclick="pickColor('#E8C060','黄金')"><div class="cc-dot" id="cc-黄金" style="background:#E8C060;"></div><span class="cc-lbl">黄金</span></div>
+            <div class="cc-item" onclick="pickColor('#F2B0B0','ロゼ')"><div class="cc-dot" id="cc-ロゼ" style="background:#F2B0B0;"></div><span class="cc-lbl">ロゼ</span></div>
+            <div class="cc-item" onclick="pickColor('#C04060','ルビー')"><div class="cc-dot" id="cc-ルビー" style="background:#C04060;"></div><span class="cc-lbl">ルビー</span></div>
+            <div class="cc-item" onclick="pickColor('#8B1A2A','ガーネット')"><div class="cc-dot" id="cc-ガーネット" style="background:#8B1A2A;"></div><span class="cc-lbl">ガーネット</span></div>
+            <div class="cc-item" onclick="pickColor('#3D0A1A','パープル')"><div class="cc-dot" id="cc-パープル" style="background:#3D0A1A;"></div><span class="cc-lbl">パープル</span></div>
           </div>
         </div>
 
-        <!-- 昼 -->
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-blue-400 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="6.34" y1="17.66" x2="4.93" y2="19.07"/><line x1="19.07" y1="4.93" x2="17.66" y2="6.34"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">昼の業務 (09:00〜)</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-red-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">09:00</div>
-              <div><div class="font-bold text-red-700">米準備・検品</div><div class="text-xs text-gray-500 mt-1">なりこま食材検品。不足は9:30までに代表へ。サ高住と小規模を混同しない。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">10:00</div>
-              <div><div class="font-bold text-gray-800">スチコン1便</div><div class="text-xs text-gray-500 mt-1">余熱完了後投入。冷却物(サラダ等)を先に配色。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">10:30</div>
-              <div><div class="font-bold text-gray-800">盛り付け</div><div class="text-xs text-gray-500 mt-1">ガス釜点火。10:45にお粥盛り付け。南半は1人で担当。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">11:40</div>
-              <div><div class="font-bold text-gray-800">ご飯配食</div><div class="text-xs text-gray-500 mt-1">個人別グラム数(75〜160g)を厳守。3点チェック実施。</div></div>
-            </div>
-            <div class="mt-3 p-2 bg-slate-50 text-xs text-slate-500 rounded border border-slate-100 font-bold uppercase tracking-wider">
-              昼の出庫 12:00 (変わり飯11:55) / 返却 適宜
-            </div>
+        <!-- 色調 -->
+        <div class="seg-group"><div class="seg-lbl">色調</div>
+          <div class="seg" id="sg-hue">
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">紫がかった</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">オレンジがかった</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">黒みを帯びた</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">縁が明るい</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">ガーネット/ダークチェリーレッド</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">ルビー/ラズベリーレッド</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">トパーズ</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">マホガニー</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-hue')">レンガ色</button>
           </div>
         </div>
 
-        <!-- 夕 -->
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-indigo-400 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">夕の業務 (15:30〜)</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-red-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">15:30</div>
-              <div><div class="font-bold text-red-700">開始・機器ON</div><div class="text-xs text-gray-500 mt-1">スチコンON、粥・味噌汁準備。伝票・食札・食器の数を照合。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">16:00</div>
-              <div><div class="font-bold text-gray-800">冷却物盛り付け</div><div class="text-xs text-gray-500 mt-1">メニュー通り水切り徹底。16:50までにお粥・南半を盛り車内へ。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">17:40</div>
-              <div><div class="font-bold text-gray-800">ご飯配食</div><div class="text-xs text-gray-500 mt-1">正確なグラム数。残ったご飯は翌朝のお粥か冷凍へ。</div></div>
-            </div>
-            <div class="flex gap-3 mb-4 border-l-2 border-gray-100 pl-4 relative">
-              <div class="timeline-dot bg-blue-500"></div>
-              <div class="min-w-[68px] text-gray-500 font-mono text-xs pt-1">18:00</div>
-              <div><div class="font-bold text-gray-800">出庫・締め</div><div class="text-xs text-gray-500 mt-1">18:45に返却されない場合は回収。翌日の米セット。洗浄機OFF(長押し)。</div></div>
-            </div>
-            <div class="mt-3 p-2 bg-slate-50 text-xs text-slate-500 rounded border border-slate-100 font-bold uppercase tracking-wider">
-              夕の出庫 18:00 / 返却 18:45
-            </div>
+        <!-- 濃淡 -->
+        <div class="seg-group"><div class="seg-lbl">濃淡</div>
+          <div class="seg" id="sg-depth">
+            <button class="seg-btn" onclick="pickSeg(this,'sg-depth')">無色に近い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-depth')">明るい</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-depth')">やや明るい</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-depth')">やや濃い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-depth')">濃い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-depth')">非常に濃い</button>
           </div>
         </div>
 
-      </div>
-    </div>
-
-    <!-- ============ 調理・炊飯 ============ -->
-    <div id="tab-cooking" class="tab-content">
-      <div class="space-y-5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-          <div class="bg-white rounded-xl shadow-sm border-t-4 border-amber-500 p-5">
-            <div class="flex items-center gap-2 mb-4 border-b pb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M17.66 17.66l1.41 1.41M4.93 4.93l1.41 1.41M6.34 17.66l-1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-              <h3 class="font-bold text-lg text-gray-800">炊飯の黄金比</h3>
-            </div>
-            <div class="text-sm text-gray-700">
-              <div class="bg-amber-50 p-4 rounded-lg mb-4">
-                <p class="font-bold text-amber-800 mb-2 underline">米の量の計算</p>
-                <p>入所者 3人につき1合 / 職員 2人につき1合</p>
-                <p class="text-xs text-amber-600 mt-1">※そこから軟飯・粥の人数分をマイナスする。</p>
-              </div>
-              <div class="space-y-3">
-                <div class="flex justify-between border-b pb-1">
-                  <span>ガス釜の水加減</span>
-                  <span class="font-bold">合数 + 1合分弱</span>
-                </div>
-                <p class="text-xs text-gray-500">（例：1.2合なら水は1.35合弱）</p>
-                <div class="flex justify-between border-b pb-1">
-                  <span>炊飯器の水加減</span>
-                  <span class="font-bold">合数 + 0.5合分</span>
-                </div>
-                <div class="bg-red-50 p-2 text-red-700 text-xs font-bold rounded">
-                  注意：研いだ後は一度完全に水を切ること。残っていると米が緩くなる。
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl shadow-sm border-t-4 border-blue-500 p-5">
-            <div class="flex items-center gap-2 mb-4 border-b pb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-              <h3 class="font-bold text-lg text-gray-800">野菜・果物の消毒 (200PPM)</h3>
-            </div>
-            <div class="text-sm text-gray-700">
-              <ol class="list-decimal ml-4 space-y-2">
-                <li>青いたらいに水を満タンに入れる。</li>
-                <li>ハイター液をキャップ約1/3程度入れる。</li>
-                <li>食材を<strong>5分間</strong>浸透させる。</li>
-                <li>流水で<strong>10分間</strong>すすぐ。</li>
-                <li>手袋を外し、ちぎる・切るの工程へ。</li>
-              </ol>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-slate-500 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">個人別ご飯の分量</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              <div class="bg-slate-100 p-2 text-center rounded-lg font-bold">75 <span class="text-xs text-slate-500">g</span></div>
-              <div class="bg-slate-100 p-2 text-center rounded-lg font-bold">80 <span class="text-xs text-slate-500">g</span></div>
-              <div class="bg-slate-100 p-2 text-center rounded-lg font-bold">100 <span class="text-xs text-slate-500">g</span></div>
-              <div class="bg-slate-100 p-2 text-center rounded-lg font-bold">120 <span class="text-xs text-slate-500">g</span></div>
-              <div class="bg-slate-100 p-2 text-center rounded-lg font-bold">130 <span class="text-xs text-slate-500">g</span></div>
-              <div class="bg-slate-100 p-2 text-center rounded-lg font-bold">160 <span class="text-xs text-slate-500">g</span></div>
-            </div>
-            <p class="text-xs text-gray-500 mt-3 italic">※味噌汁は1人150cc。減塩の方への配慮を忘れないこと。</p>
+        <!-- 清澄度 -->
+        <div class="seg-group"><div class="seg-lbl">清澄度</div>
+          <div class="seg" id="sg-clarity">
+            <button class="seg-btn" onclick="pickSeg(this,'sg-clarity')">澄んだ</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-clarity')">深みのある</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-clarity')">やや濁った</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-clarity')">濁った</button>
           </div>
         </div>
 
-        <!-- スチコン操作 -->
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-orange-300 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M17.66 17.66l1.41 1.41M4.93 4.93l1.41 1.41M6.34 17.66l-1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">スチコン操作・注意事項</h3>
+        <!-- 輝き -->
+        <div class="seg-group"><div class="seg-lbl">輝き</div>
+          <div class="seg" id="sg-luster">
+            <button class="seg-btn" onclick="pickSeg(this,'sg-luster')">輝きのある</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-luster')">艶のある</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-luster')">モヤがかかった</button>
           </div>
-          <div class="text-sm text-gray-700 space-y-3">
-            <div class="bg-orange-50 p-3 rounded-lg">
-              <p class="font-bold text-orange-800 mb-1">ガス・スチコン使用時の注意</p>
-              <ul class="text-xs space-y-1">
-                <li>・電熱・ガスタイプによって元栓の取り扱いが異なる</li>
-                <li>・余熱完了後にのみ食材を投入すること</li>
-                <li>・食材を入れている間はドアを開けない</li>
-                <li>・コールドスタート：お粥や味噌汁等は専用調理を使用</li>
-              </ul>
-            </div>
-            <div class="bg-blue-50 p-3 rounded-lg">
-              <p class="font-bold text-blue-800 mb-1">加熱後の流れ</p>
-              <ul class="text-xs space-y-1">
-                <li>・スチコン停止後、食材を冷却庫または配膳車へ移動</li>
-                <li>・1種類ずつ加熱すると取り違え防止になる</li>
-                <li>・温めない食材は一旦冷蔵庫へ入れる</li>
-              </ul>
-            </div>
+        </div>
+
+        <!-- 粘性 -->
+        <div class="seg-group"><div class="seg-lbl">粘性</div>
+          <div class="seg" id="sg-viscosity">
+            <button class="seg-btn" onclick="pickSeg(this,'sg-viscosity')">さらっとした</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-viscosity')">やや軽い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-viscosity')">やや強い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-viscosity')">強い</button>
+          </div>
+        </div>
+
+        <!-- 外観の印象 -->
+        <div class="seg-group"><div class="seg-lbl">外観の印象</div>
+          <div class="seg" id="sg-appimpression">
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">若々しい</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">若い状態を抜けた</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">軽快な</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">成熟度が高い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">濃縮感が強い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">やや熟成した</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">熟成した</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">酸化熟成のニュアンス</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-appimpression')">酸化が進んだ</button>
           </div>
         </div>
 
       </div>
     </div>
 
-    <!-- ============ 清掃・保守 ============ -->
-    <div id="tab-cleaning" class="tab-content">
-      <div class="space-y-5">
-
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-green-500 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">清掃のルールと頻度</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <h4 class="font-bold text-green-700 border-b mb-2">日常（毎日）</h4>
-                <ul class="text-xs space-y-2">
-                  <li>・午後は基本「ほぼ掃除」の時間とする。</li>
-                  <li>・床のモップ掛け：バケツにハイターを入れる。配膳車付近は入念に。</li>
-                  <li>・水槽：全体を丁寧に洗い、ハイターを溜めて一気流し。</li>
-                  <li>・食器：1種類ずつ洗うと効率が良い。油物のみ洗剤使用。</li>
-                  <li class="text-red-600 font-bold">・ガジガジスポンジ厳禁：電気釜・お椀には絶対に使用しない。</li>
-                  <li>・スポンジは普通スポンジとガジガジスポンジを使い分け。KWKWで電気と漏電の心配不要。</li>
-                </ul>
-              </div>
-              <div>
-                <h4 class="font-bold text-green-700 border-b mb-2">定期（社員中心）</h4>
-                <ul class="text-xs space-y-2">
-                  <li>・フィルター掃除：月1〜2回</li>
-                  <li>・グリストラップ大掃除：2週間〜1ヶ月に1回（端までブラシ）</li>
-                  <li>・換気扇：年3〜4回</li>
-                  <li>・パッキン・ホース・壁落とし・台の最上部・最下部</li>
-                  <li>・更衣室の整理・不用品廃棄</li>
-                </ul>
-              </div>
-            </div>
+    <!-- sc2 香り -->
+    <div class="screen" id="sc2">
+      <div class="sec">
+        <div class="sec-title">香り（ノーズ）</div>
+        <div class="seg-group"><div class="seg-lbl">強さ</div>
+          <div class="seg" id="sg-noseint">
+            <button class="seg-btn" onclick="pickSeg(this,'sg-noseint')">軽い</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-noseint')">中程度</button>
+            <button class="seg-btn" onclick="pickSeg(this,'sg-noseint')">強い</button>
           </div>
         </div>
-
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-red-500 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">退出前の「絶対再チェック」リスト</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="p-3 bg-red-50 rounded-lg border border-red-100 flex items-center gap-3">
-                <div class="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center font-black text-lg flex-shrink-0">!</div>
-                <div>
-                  <div class="font-bold text-red-800">換気扇スイッチ</div>
-                  <p class="text-xs text-red-600">上段右2つ / 中段左2つ / 左下1つ</p>
-                </div>
-              </div>
-              <ul class="text-sm font-bold space-y-2">
-                <li class="flex items-start gap-2 text-slate-700"><span class="text-red-400">□</span> 米の水量・タイマーセット（2度確認）</li>
-                <li class="flex items-start gap-2 text-slate-700"><span class="text-red-400">□</span> ガスの元栓・ボイラー電源</li>
-                <li class="flex items-start gap-2 text-slate-700"><span class="text-red-400">□</span> 保管庫スイッチ2つON（食器が全部入ってから）</li>
-                <li class="flex items-start gap-2 text-slate-700"><span class="text-red-400">□</span> トイレゴミ含む全てのゴミ出し・門閉め</li>
-                <li class="flex items-start gap-2 text-slate-700"><span class="text-red-400">□</span> 窓閉め（全箇所確認）</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- 洗浄機の使い方 -->
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-teal-400 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">洗浄機・食器洗い手順</h3>
-          </div>
-          <div class="text-sm text-gray-700 space-y-3">
-            <div class="bg-teal-50 p-3 rounded-lg">
-              <p class="font-bold text-teal-800 mb-2">洗浄機の使い方</p>
-              <ol class="text-xs list-decimal ml-4 space-y-1">
-                <li>食器を全て入れてからスイッチON（食器が入る前はNG）</li>
-                <li>洗浄完了後、食器は直接保管庫へ移動</li>
-                <li>洗浄機OFF時は長押しで停止（シャッターは開けたまま）</li>
-                <li>停止後：蓋を2つOFF、水を流してカゴを洗い、再び蓋をする</li>
-              </ol>
-            </div>
-            <div class="bg-yellow-50 p-3 rounded-lg">
-              <p class="font-bold text-yellow-800 mb-1">食器洗い注意点</p>
-              <ul class="text-xs space-y-1">
-                <li>・お椀・カップ：スポンジを底の穴から入れてハイター付けつけ洗い</li>
-                <li>・オーバーフローに注意（外から汚れが流れないよう）</li>
-                <li>・スープ等は下の平らいに入れ、お皿は右に置く</li>
-                <li>・汁物はスポンジで洗いながら洗浄機へ投入 1種類1方向入れ替え</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
+        <div class="divider"></div><div class="sec-sub">一次アロマ</div>
+        <div class="chip-group"><div class="cg-lbl">フローラル</div><div class="chips">
+          <span class="chip floral" data-key="aroma" onclick="toggle(this)">ブロッサム</span>
+          <span class="chip floral" data-key="aroma" onclick="toggle(this)">ローズ</span>
+          <span class="chip floral" data-key="aroma" onclick="toggle(this)">バイオレット</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">グリーンフルーツ</div><div class="chips">
+          <span class="chip gfruit" data-key="aroma" onclick="toggle(this)">りんご</span>
+          <span class="chip gfruit" data-key="aroma" onclick="toggle(this)">洋梨</span>
+          <span class="chip gfruit" data-key="aroma" onclick="toggle(this)">グーズベリー</span>
+          <span class="chip gfruit" data-key="aroma" onclick="toggle(this)">ぶどう</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">柑橘系</div><div class="chips">
+          <span class="chip citrus" data-key="aroma" onclick="toggle(this)">グレープフルーツ</span>
+          <span class="chip citrus" data-key="aroma" onclick="toggle(this)">レモン</span>
+          <span class="chip citrus" data-key="aroma" onclick="toggle(this)">ライム</span>
+          <span class="chip citrus" data-key="aroma" onclick="toggle(this)">オレンジ</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">石果類</div><div class="chips">
+          <span class="chip stone" data-key="aroma" onclick="toggle(this)">桃</span>
+          <span class="chip stone" data-key="aroma" onclick="toggle(this)">あんず</span>
+          <span class="chip stone" data-key="aroma" onclick="toggle(this)">ネクタリン</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">トロピカル</div><div class="chips">
+          <span class="chip tropical" data-key="aroma" onclick="toggle(this)">バナナ</span>
+          <span class="chip tropical" data-key="aroma" onclick="toggle(this)">ライチ</span>
+          <span class="chip tropical" data-key="aroma" onclick="toggle(this)">マンゴー</span>
+          <span class="chip tropical" data-key="aroma" onclick="toggle(this)">パッションフルーツ</span>
+          <span class="chip tropical" data-key="aroma" onclick="toggle(this)">パイナップル</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">赤系フルーツ</div><div class="chips">
+          <span class="chip rfruit" data-key="aroma" onclick="toggle(this)">赤スグリ</span>
+          <span class="chip rfruit" data-key="aroma" onclick="toggle(this)">クランベリー</span>
+          <span class="chip rfruit" data-key="aroma" onclick="toggle(this)">ラズベリー</span>
+          <span class="chip rfruit" data-key="aroma" onclick="toggle(this)">ストロベリー</span>
+          <span class="chip rfruit" data-key="aroma" onclick="toggle(this)">チェリー</span>
+          <span class="chip rfruit" data-key="aroma" onclick="toggle(this)">赤プラム</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">黒系フルーツ</div><div class="chips">
+          <span class="chip bfruit" data-key="aroma" onclick="toggle(this)">ブラックカラント</span>
+          <span class="chip bfruit" data-key="aroma" onclick="toggle(this)">ブラックベリー</span>
+          <span class="chip bfruit" data-key="aroma" onclick="toggle(this)">ブルーベリー</span>
+          <span class="chip bfruit" data-key="aroma" onclick="toggle(this)">ブラックチェリー</span>
+          <span class="chip bfruit" data-key="aroma" onclick="toggle(this)">黒プラム</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">草本・野菜系</div><div class="chips">
+          <span class="chip herb" data-key="aroma" onclick="toggle(this)">グリーンペッパー</span>
+          <span class="chip herb" data-key="aroma" onclick="toggle(this)">青草</span>
+          <span class="chip herb" data-key="aroma" onclick="toggle(this)">トマトの葉</span>
+          <span class="chip herb" data-key="aroma" onclick="toggle(this)">アスパラ</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">ハーバル</div><div class="chips">
+          <span class="chip herbal" data-key="aroma" onclick="toggle(this)">ユーカリ</span>
+          <span class="chip herbal" data-key="aroma" onclick="toggle(this)">ミント</span>
+          <span class="chip herbal" data-key="aroma" onclick="toggle(this)">フェンネル</span>
+          <span class="chip herbal" data-key="aroma" onclick="toggle(this)">ドライハーブ</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">スパイス</div><div class="chips">
+          <span class="chip" data-key="aroma" onclick="toggle(this)">黒/白胡椒</span>
+          <span class="chip" data-key="aroma" onclick="toggle(this)">リコリス</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">果実の熟度</div><div class="chips">
+          <span class="chip rfruit2" data-key="aroma" onclick="toggle(this)">未熟果実</span>
+          <span class="chip rfruit2" data-key="aroma" onclick="toggle(this)">熟した果実</span>
+          <span class="chip rfruit2" data-key="aroma" onclick="toggle(this)">ドライフルーツ</span>
+          <span class="chip rfruit2" data-key="aroma" onclick="toggle(this)">煮た果実</span>
+        </div></div>
+        <div class="divider"></div><div class="sec-sub">二次アロマ</div>
+        <div class="chip-group"><div class="cg-lbl">酵母由来</div><div class="chips">
+          <span class="chip yeast" data-key="aroma" onclick="toggle(this)">ビスケット</span>
+          <span class="chip yeast" data-key="aroma" onclick="toggle(this)">パン</span>
+          <span class="chip yeast" data-key="aroma" onclick="toggle(this)">トースト</span>
+          <span class="chip yeast" data-key="aroma" onclick="toggle(this)">パン生地</span>
+          <span class="chip yeast" data-key="aroma" onclick="toggle(this)">チーズ</span>
+          <span class="chip yeast" data-key="aroma" onclick="toggle(this)">バター</span>
+          <span class="chip yeast" data-key="aroma" onclick="toggle(this)">クリーム</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">オーク</div><div class="chips">
+          <span class="chip oak" data-key="aroma" onclick="toggle(this)">バニラ</span>
+          <span class="chip oak" data-key="aroma" onclick="toggle(this)">クローブ</span>
+          <span class="chip oak" data-key="aroma" onclick="toggle(this)">シダー</span>
+          <span class="chip oak" data-key="aroma" onclick="toggle(this)">スモーク</span>
+          <span class="chip oak" data-key="aroma" onclick="toggle(this)">チョコレート</span>
+          <span class="chip oak" data-key="aroma" onclick="toggle(this)">コーヒー</span>
+        </div></div>
+        <div class="divider"></div><div class="sec-sub">三次アロマ（熟成）</div>
+        <div class="chip-group"><div class="cg-lbl">赤ワイン</div><div class="chips">
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">ドライフルーツ</span>
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">革</span>
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">土</span>
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">マッシュルーム</span>
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">肉</span>
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">タバコ</span>
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">濡れた葉</span>
+          <span class="chip tertred" data-key="aroma" onclick="toggle(this)">森の床</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">白ワイン</div><div class="chips">
+          <span class="chip tertwhite" data-key="aroma" onclick="toggle(this)">オレンジマーマレード</span>
+          <span class="chip tertwhite" data-key="aroma" onclick="toggle(this)">ガソリン</span>
+          <span class="chip tertwhite" data-key="aroma" onclick="toggle(this)">シナモン</span>
+          <span class="chip tertwhite" data-key="aroma" onclick="toggle(this)">アーモンド</span>
+          <span class="chip tertwhite" data-key="aroma" onclick="toggle(this)">ハチミツ</span>
+        </div></div>
       </div>
     </div>
 
-    <!-- ============ 事務・月次 ============ -->
-    <div id="tab-admin" class="tab-content">
-      <div class="space-y-5">
-
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-purple-500 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">事務・報告タスク</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <h4 class="font-bold text-purple-700 border-b mb-2">月初・月末タスク</h4>
-                <ul class="text-xs space-y-2">
-                  <li>・月初：出勤簿、割れ食器破損表を前原さんへ提出。</li>
-                  <li>・<strong>翌月のシフトは月末（最終週）までに前原さんへ提出。</strong></li>
-                  <li>・月末：メニュー（常食/ソフト）数票、招待表の貼付。</li>
-                  <li>・チェック表：健康チェック表、温湿度表2枚。溜まったら後出の箱へ。</li>
-                  <li>・発注：米、ラップ等は代表へ。洗剤、ペーパー、手袋等は山田さんへ。</li>
-                  <li>・賞味期限チェック：2〜3ヶ月に1回は実施したい。</li>
-                  <li>・なりこま打ち合わせ：月1回程度。なりこまメニュー・チーム連絡・ツール確認等を23日に実施したい。</li>
-                </ul>
-              </div>
-              <div>
-                <h4 class="font-bold text-purple-700 border-b mb-2">随時・報告業務</h4>
-                <ul class="text-xs space-y-2">
-                  <li>・シフト変更・病欠代行者の手配（正社員）。</li>
-                  <li>・買い物確認：必ず前原さんに了承を得る（レシート必須）。</li>
-                  <li>・残りおやつ・冷凍物処理：前原さんor山田さんへ相談。</li>
-                  <li>・メニューからはずす食材のXで切る→冷蔵庫へ（レシピ量に従う）。</li>
-                  <li>・前原さんへ了解を得たコピー（買ったもの・お釣りについて）は前原さんor山田さんへ報告・貼付、記録の人へ、シフトの確認をする。</li>
-                  <li>・チェック表(スイコン掃除3回はしないと）・スチコン定期掃除・チーム連携・シフトの再確認・昼やお茶への移動連絡。今日切れ食材がないかのチェック。</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+    <!-- sc3 味わい -->
+    <div class="screen" id="sc3">
+      <div class="sec">
+        <div class="sec-title">味わい（パレート）</div>
+        <div class="seg-group"><div class="seg-lbl">甘み</div>
+          <div class="seg" id="sg-sweet"><button class="seg-btn" onclick="pickSeg(this,'sg-sweet')">辛口</button><button class="seg-btn" onclick="pickSeg(this,'sg-sweet')">やや辛口</button><button class="seg-btn" onclick="pickSeg(this,'sg-sweet')">中口</button><button class="seg-btn" onclick="pickSeg(this,'sg-sweet')">甘口</button></div>
         </div>
-
-
-        <!-- 保存食 -->
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-green-400 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">保存食の管理</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <div class="bg-green-50 p-3 rounded-lg mb-3">
-              <p class="font-bold text-green-800 mb-1">保存期間：採取日から<span class="text-xl">15日間</span></p>
-              <p class="text-xs">例：7/13採取 → 7/28まで保存</p>
-            </div>
-            <ul class="text-xs space-y-2">
-              <li>・その日の食事をメモして、管理している。</li>
-              <li>・残量が空ならやりなくていい。必要があれば実施する。</li>
-              <li>・朝は9時までに上方に報告・連絡・相談をして伝える。</li>
-              <li>・調理方法について：先方に1冊以上の記入があれば、その通りにする。</li>
-              <li>・冷凍：g数はKWKWスポンジ等で自分管理なので用意不要。</li>
-            </ul>
-          </div>
+        <div class="seg-group"><div class="seg-lbl">酸味</div>
+          <div class="seg" id="sg-acid"><button class="seg-btn" onclick="pickSeg(this,'sg-acid')">低い</button><button class="seg-btn" onclick="pickSeg(this,'sg-acid')">中程度</button><button class="seg-btn" onclick="pickSeg(this,'sg-acid')">高い</button></div>
         </div>
-
+        <div class="seg-group"><div class="seg-lbl">タンニン</div>
+          <div class="seg" id="sg-tannin"><button class="seg-btn" onclick="pickSeg(this,'sg-tannin')">低い</button><button class="seg-btn" onclick="pickSeg(this,'sg-tannin')">中程度</button><button class="seg-btn" onclick="pickSeg(this,'sg-tannin')">高い</button></div>
+        </div>
+        <div class="seg-group"><div class="seg-lbl">アルコール感</div>
+          <div class="seg" id="sg-alcfeel"><button class="seg-btn" onclick="pickSeg(this,'sg-alcfeel')">低い</button><button class="seg-btn" onclick="pickSeg(this,'sg-alcfeel')">中程度</button><button class="seg-btn" onclick="pickSeg(this,'sg-alcfeel')">高い</button></div>
+        </div>
+        <div class="seg-group"><div class="seg-lbl">ボディ</div>
+          <div class="seg" id="sg-body"><button class="seg-btn" onclick="pickSeg(this,'sg-body')">ライト</button><button class="seg-btn" onclick="pickSeg(this,'sg-body')">ミディアム</button><button class="seg-btn" onclick="pickSeg(this,'sg-body')">フル</button></div>
+        </div>
+        <div class="seg-group"><div class="seg-lbl">フレーバーの強さ</div>
+          <div class="seg" id="sg-flavorint"><button class="seg-btn" onclick="pickSeg(this,'sg-flavorint')">軽い</button><button class="seg-btn" onclick="pickSeg(this,'sg-flavorint')">中程度</button><button class="seg-btn" onclick="pickSeg(this,'sg-flavorint')">強い</button></div>
+        </div>
+        <div class="divider"></div><div class="sec-sub">フレーバー</div>
+        <div class="chip-group"><div class="cg-lbl">フローラル</div><div class="chips">
+          <span class="chip floral" data-key="flavor" onclick="toggle(this)">ブロッサム</span>
+          <span class="chip floral" data-key="flavor" onclick="toggle(this)">ローズ</span>
+          <span class="chip floral" data-key="flavor" onclick="toggle(this)">バイオレット</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">柑橘系</div><div class="chips">
+          <span class="chip citrus" data-key="flavor" onclick="toggle(this)">グレープフルーツ</span>
+          <span class="chip citrus" data-key="flavor" onclick="toggle(this)">レモン</span>
+          <span class="chip citrus" data-key="flavor" onclick="toggle(this)">ライム</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">赤系フルーツ</div><div class="chips">
+          <span class="chip rfruit" data-key="flavor" onclick="toggle(this)">ラズベリー</span>
+          <span class="chip rfruit" data-key="flavor" onclick="toggle(this)">ストロベリー</span>
+          <span class="chip rfruit" data-key="flavor" onclick="toggle(this)">チェリー</span>
+          <span class="chip rfruit" data-key="flavor" onclick="toggle(this)">赤プラム</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">黒系フルーツ</div><div class="chips">
+          <span class="chip bfruit" data-key="flavor" onclick="toggle(this)">ブラックカラント</span>
+          <span class="chip bfruit" data-key="flavor" onclick="toggle(this)">ブラックベリー</span>
+          <span class="chip bfruit" data-key="flavor" onclick="toggle(this)">ブラックチェリー</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">オーク</div><div class="chips">
+          <span class="chip oak" data-key="flavor" onclick="toggle(this)">バニラ</span>
+          <span class="chip oak" data-key="flavor" onclick="toggle(this)">チョコレート</span>
+          <span class="chip oak" data-key="flavor" onclick="toggle(this)">コーヒー</span>
+          <span class="chip oak" data-key="flavor" onclick="toggle(this)">スモーク</span>
+        </div></div>
+        <div class="chip-group"><div class="cg-lbl">熟成</div><div class="chips">
+          <span class="chip tertred" data-key="flavor" onclick="toggle(this)">革</span>
+          <span class="chip tertred" data-key="flavor" onclick="toggle(this)">土</span>
+          <span class="chip tertred" data-key="flavor" onclick="toggle(this)">タバコ</span>
+          <span class="chip tertred" data-key="flavor" onclick="toggle(this)">森の床</span>
+          <span class="chip tertwhite" data-key="flavor" onclick="toggle(this)">ハチミツ</span>
+          <span class="chip tertwhite" data-key="flavor" onclick="toggle(this)">アーモンド</span>
+        </div></div>
+        <div class="divider"></div>
+        <div class="seg-group"><div class="seg-lbl">余韻</div>
+          <div class="seg" id="sg-finish"><button class="seg-btn" onclick="pickSeg(this,'sg-finish')">短い</button><button class="seg-btn" onclick="pickSeg(this,'sg-finish')">中程度</button><button class="seg-btn" onclick="pickSeg(this,'sg-finish')">長い</button></div>
+        </div>
       </div>
     </div>
 
-    <!-- ============ 衛生・心得 ============ -->
-    <div id="tab-hygiene" class="tab-content">
-      <div class="space-y-5">
-
-        <div class="bg-red-600 text-white p-6 rounded-2xl shadow-xl">
-          <h2 class="text-xl font-black mb-4 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            衛生管理の鉄則：三原則
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-              <h3 class="text-lg font-bold mb-2">1. つけない</h3>
-              <p class="text-sm opacity-90 leading-relaxed">手袋の指先には触れない。手袋で食材以外を触らない。貸し借りは厳禁。</p>
-            </div>
-            <div>
-              <h3 class="text-lg font-bold mb-2">2. 増やさない</h3>
-              <p class="text-sm opacity-90 leading-relaxed">保存食は採取日から15日間保存。<br>（例：7/13採取 → 7/28まで）</p>
-            </div>
-            <div>
-              <h3 class="text-lg font-bold mb-2">3. やっつける</h3>
-              <p class="text-sm opacity-90 leading-relaxed">スチコン加熱の徹底。アルコール消毒は「取っ手」を重点的に。</p>
-            </div>
+    <!-- sc4 総評 -->
+    <div class="screen" id="sc4">
+      <div class="sec">
+        <div class="sec-title">総評</div>
+        <div class="field"><div class="lbl">品質</div>
+          <div class="q-btns" id="qbtns">
+            <button class="q-btn" onclick="pickQ(this)">欠陥あり</button>
+            <button class="q-btn" onclick="pickQ(this)">普通</button>
+            <button class="q-btn" onclick="pickQ(this)">良い</button>
+            <button class="q-btn" onclick="pickQ(this)">優秀</button>
+            <button class="q-btn" onclick="pickQ(this)">卓越</button>
           </div>
         </div>
-
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-slate-800 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">厨房チームの心得</h3>
-          </div>
-          <div class="text-sm text-gray-700">
-            <ul class="space-y-3 font-bold text-slate-800">
-              <li class="flex gap-2 items-start"><span class="text-slate-400 flex-shrink-0">·</span>お互いの意見を尊重し、チームとしての判断を大切にしましょう。</li>
-              <li class="flex gap-2 items-start"><span class="text-slate-400 flex-shrink-0">·</span>「盛り付けは子供でもできる。プロは数、形態、生麺の確認を徹底する」。</li>
-              <li class="flex gap-2 items-start text-red-600"><span class="flex-shrink-0">·</span>再確認と依存は違う。自分の仕事に責任を持つ。</li>
-              <li class="flex gap-2 items-start"><span class="text-slate-400 flex-shrink-0">·</span>不明な点は確認し合い、思い込みで進めないようにしましょう。</li>
-              <li class="flex gap-2 items-start text-blue-700"><span class="flex-shrink-0">·</span>理不尽なこと、言いがかりがあればすぐに代表へ相談。</li>
-              <li class="flex gap-2 items-start"><span class="text-slate-400 flex-shrink-0">·</span>メニューをよく確認・よく読む。もし半分しかいない状態で食数が多い時は介護担当に申し出ましょう。</li>
-              <li class="flex gap-2 items-start"><span class="text-slate-400 flex-shrink-0">·</span>不適切なこと・スタッフ同士の態度・行動は即座に代表へ相談しましょう。</li>
-              <li class="flex gap-2 items-start"><span class="text-slate-400 flex-shrink-0">·</span>自分の仕事は責任を持って行いましょう。自分を守るお金や支払いを間違えないようにしましょう。</li>
-              <li class="flex gap-2 items-start"><span class="text-slate-400 flex-shrink-0">·</span>ちょっと苦情は大事。ちょっと苦情は大事に稼ぐための大事なことです。はい。チームで働いているので、苦情が分かりで合った場合は不適切な行動はすぐに代表へ相談しましょう。</li>
-            </ul>
+        <div class="field" style="margin-top:14px;"><div class="lbl">総合評価</div>
+          <div class="stars-row" id="stars">
+            <span class="star" onclick="setStar(1)">★</span>
+            <span class="star" onclick="setStar(2)">★</span>
+            <span class="star" onclick="setStar(3)">★</span>
+            <span class="star" onclick="setStar(4)">★</span>
+            <span class="star" onclick="setStar(5)">★</span>
           </div>
         </div>
-
-        <!-- 配膳サービス注意 -->
-        <div class="bg-white rounded-xl shadow-sm border-t-4 border-yellow-400 p-5">
-          <div class="flex items-center gap-2 mb-4 border-b pb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <h3 class="font-bold text-lg text-gray-800">配膳サービス・食事介助 注意事項</h3>
-          </div>
-          <div class="text-sm text-gray-700 space-y-3">
-            <div class="bg-yellow-50 p-3 rounded-lg">
-              <p class="font-bold text-yellow-800 mb-2">サービス付き高齢者住宅（サ高住）と小規模への配膳</p>
-              <ul class="text-xs space-y-1">
-                <li>・デイサービス担当へ食事を各々に分ける（カウンターに立って）</li>
-                <li>・チームごとの名前、目安人数、食事の数を確認してから介護担当に申し出ること</li>
-                <li>・差し引きは1回行うごとに、チームへ入れ、空へ（左下へ）移動させる</li>
-              </ul>
-            </div>
-            <div class="bg-red-50 p-3 rounded-lg">
-              <p class="font-bold text-red-800 mb-2">食事形態の確認（必須）</p>
-              <ul class="text-xs space-y-1">
-                <li>・ソフト食・ミキサー食・普通食は必ずメニューで確認してから盛り付ける</li>
-                <li>・ゼリー食：ゼリー食はメニューに沿って切って冷蔵庫へ入れる</li>
-                <li>・柔らかくすべき食材（えのき等）はレシピ量に従って切って冷蔵庫へ入れる</li>
-                <li>・ご飯は量が人によって多く食べる人がいれば、いる場合に関しては食を少し減らし、11時に残りできるなら、変わり飯をするように</li>
-              </ul>
-            </div>
-          </div>
+        <div class="field" style="margin-top:14px;"><div class="lbl">最終コメント</div>
+          <textarea class="inp" id="f-comment" placeholder="このワインについて気づいたことを..."></textarea>
         </div>
-
+        <button class="save-full-btn" onclick="saveNote()">💾 保存する</button>
       </div>
+      <div class="form-bottom-pad"></div>
     </div>
 
-  </main>
+  </div><!-- /form-scroll -->
+</div><!-- /page-form -->
 
-  <footer class="max-w-5xl mx-auto mt-8 mb-6 px-4 text-center text-slate-400 text-xs">
-    <p>※本マニュアルは「メディケアビレッジ柏島 厨房工程表」及び現場ヒアリングに基づき作成されました。</p>
-    <p class="mt-1">Medicare Village Kashiwajima - Kitchen Operation Standard</p>
-  </footer>
+</div><!-- /app -->
 
-  <script>
-    function switchTab(tabId, btn) {
-      // Hide all tab contents
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      // Remove active from all buttons
-      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      // Show selected tab
-      document.getElementById('tab-' + tabId).classList.add('active');
-      // Activate button
-      btn.classList.add('active');
-      // Scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+<!-- INSTALL GUIDE OVERLAY -->
+<div class="install-overlay" id="install-overlay">
+  <div class="install-sheet">
+    <div style="font-size:16px;font-weight:600;margin-bottom:16px;text-align:center;">📲 ホーム画面に追加する方法</div>
+    <div class="install-step">
+      <div class="install-step-num">1</div>
+      <div class="install-step-txt">Safari でこのページを開いた状態で、画面下部の <strong>「共有」ボタン（□↑）</strong> をタップします</div>
+    </div>
+    <div class="install-step">
+      <div class="install-step-num">2</div>
+      <div class="install-step-txt">メニューをスクロールして <strong>「ホーム画面に追加」</strong> をタップします</div>
+    </div>
+    <div class="install-step">
+      <div class="install-step-num">3</div>
+      <div class="install-step-txt">名前を確認して <strong>「追加」</strong> をタップすれば完了です<br><span style="color:var(--text2);font-size:12px;">ホーム画面にCavaアイコンが表示されます</span></div>
+    </div>
+    <div style="background:#fff8e1;border-radius:10px;padding:10px 12px;font-size:12px;color:#7a5c00;margin-bottom:14px;line-height:1.6;">
+      ⚠️ Chrome・LINEブラウザではなく <strong>Safari</strong> でお使いください
+    </div>
+    <button class="install-close" onclick="document.getElementById('install-overlay').classList.remove('on')">閉じる</button>
+  </div>
+</div>
+
+<!-- WINE SEARCH OVERLAY -->
+<div class="ws-overlay" id="ws-overlay">
+  <div class="ws-sheet">
+    <div class="ws-head">
+      <span style="font-size:15px;font-weight:500;">🔍 ワイン情報を検索</span>
+      <button class="ws-close" onclick="closeWineSearch()">✕</button>
+    </div>
+    <div class="ws-body" id="ws-body"></div>
+    <div class="ws-foot">
+      <button class="ws-google-btn" onclick="openGoogleWineSearch()">🌐 Googleで検索して手動入力</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── データ (localStorage で永続化) ──────────────────────
+var STORAGE_KEY = 'cava_notes_v1';
+var DB = [];
+
+function loadDB() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    DB = raw ? JSON.parse(raw) : [];
+  } catch(e) { DB = []; }
+}
+function saveDB() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); } catch(e) {}
+}
+
+var currentFilter='all', editingId=null, viewingId=null, currentStar=3;
+var currentColorHex='#8B1A2A', currentColorName='ガーネット';
+var currentPhotoData=null;
+
+// ─── 写真処理 ─────────────────────────────────────────────
+function handlePhoto(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    currentPhotoData = e.target.result;
+    document.getElementById('photo-placeholder').style.display='none';
+    var prev = document.getElementById('photo-preview');
+    prev.src = currentPhotoData;
+    prev.style.display='block';
+    document.getElementById('photo-remove').style.display='flex';
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function removePhoto() {
+  currentPhotoData = null;
+  document.getElementById('photo-placeholder').style.display='flex';
+  var prev = document.getElementById('photo-preview');
+  prev.src=''; prev.style.display='none';
+  document.getElementById('photo-remove').style.display='none';
+}
+
+// ─── ページ切替 ────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.getElementById('page-'+name).classList.add('on');
+  if (name==='list') renderList();
+  window.scrollTo(0,0);
+}
+
+// ─── タブ切替 ──────────────────────────────────────────────
+function goTab(idx, el) {
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  el.classList.add('on');
+  document.querySelectorAll('.screen').forEach(function(s,i){s.classList.toggle('on',i===idx);});
+  document.querySelector('.form-scroll').scrollTop=0;
+}
+
+// ─── フィルター ────────────────────────────────────────────
+function setFilter(f, el) {
+  currentFilter=f;
+  document.querySelectorAll('.fchip').forEach(function(c){c.classList.remove('on');});
+  el.classList.add('on');
+  renderList();
+}
+
+// ─── 星 ───────────────────────────────────────────────────
+function setStar(v) {
+  currentStar=v;
+  document.querySelectorAll('#stars .star').forEach(function(s,i){s.classList.toggle('on',i<v);});
+}
+
+// ─── 色 ───────────────────────────────────────────────────
+function pickColor(hex, name) {
+  document.querySelectorAll('.cc-dot').forEach(function(d){d.classList.remove('on');});
+  var el=document.getElementById('cc-'+name);
+  if(el) el.classList.add('on');
+  currentColorHex=hex; currentColorName=name;
+}
+
+// ─── セグメント ────────────────────────────────────────────
+function pickSeg(el, gid) {
+  document.querySelectorAll('#'+gid+' .seg-btn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+}
+function segVal(gid) {
+  var b=document.querySelector('#'+gid+' .seg-btn.on');
+  return b?b.textContent.trim():'';
+}
+function setSegVal(gid, val) {
+  document.querySelectorAll('#'+gid+' .seg-btn').forEach(function(b){
+    b.classList.toggle('on', b.textContent.trim()===val);
+  });
+}
+
+// ─── チップ ───────────────────────────────────────────────
+function toggle(el){el.classList.toggle('on');}
+function getChips(key) {
+  var r=[];
+  document.querySelectorAll('#page-form .chip.on[data-key="'+key+'"]').forEach(function(c){r.push(c.textContent.trim());});
+  return r;
+}
+function setChips(key, vals) {
+  if(!vals) return;
+  document.querySelectorAll('#page-form .chip[data-key="'+key+'"]').forEach(function(c){
+    c.classList.toggle('on', vals.indexOf(c.textContent.trim())>=0);
+  });
+}
+
+// ─── 品質 ─────────────────────────────────────────────────
+function pickQ(el) {
+  document.querySelectorAll('#qbtns .q-btn').forEach(function(b){b.classList.remove('on');});
+  el.classList.add('on');
+}
+function setQVal(val) {
+  document.querySelectorAll('#qbtns .q-btn').forEach(function(b){
+    b.classList.toggle('on', b.textContent.trim()===val);
+  });
+}
+
+// ─── 一覧描画 ──────────────────────────────────────────────
+function typeStyle(type) {
+  var m={赤:'background:#fdf0f0;color:#8B1A2A;',白:'background:#fafaf0;color:#6b6b20;',ロゼ:'background:#fdf0f5;color:#9b3060;',スパークリング:'background:#f0f4fd;color:#1a4b8c;'};
+  return m[type]||'background:#f5f5f5;color:#888;';
+}
+function starsStr(n){var s='';for(var i=0;i<5;i++)s+=i<n?'★':'☆';return s;}
+
+function renderList() {
+  var q=(document.getElementById('search-inp').value||'').toLowerCase();
+  var filtered=DB.filter(function(n){
+    return (currentFilter==='all'||n.type===currentFilter)&&
+      (!q||n.name.toLowerCase().includes(q)||(n.region||'').toLowerCase().includes(q)||(n.producer||'').toLowerCase().includes(q));
+  }).slice().sort(function(a,b){return b.id-a.id;});
+
+  var body=document.getElementById('list-body');
+  if(!filtered.length){
+    body.innerHTML='<div class="empty">'+
+      '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 8 C20 8 16 18 16 24 C16 34 24 40 32 44 C40 40 48 34 48 24 C48 18 44 8 32 8Z" stroke="#8B1A2A" stroke-width="2.5" fill="none"/><path d="M32 44 L32 56" stroke="#8B1A2A" stroke-width="2.5" stroke-linecap="round"/><path d="M26 56 L38 56" stroke="#8B1A2A" stroke-width="2.5" stroke-linecap="round"/></svg>'+
+      '<h2>ワインの旅を始めましょう</h2>'+
+      '<p>WSETの体系的アプローチに従って<br>テイスティングノートを記録しましょう</p>'+
+      '<button class="empty-btn" onclick="openForm(null)">最初のノートを作成</button>'+
+      '</div>';
+    return;
+  }
+
+  var html='<div class="notes-list">';
+  filtered.forEach(function(n){
+    var arStr=(n.aromas&&n.aromas.length)?n.aromas.slice(0,4).join(' · '):'';
+    var thumbHTML;
+    if(n.photo){
+      thumbHTML='<img class="note-thumb" src="'+n.photo+'" />';
+    } else {
+      thumbHTML='<div class="note-thumb-placeholder" style="background:'+n.colorHex+'22;">🍷</div>';
     }
-  </script>
+    html+='<div class="note-card" onclick="openDetail('+n.id+')">'+
+      thumbHTML+
+      '<div class="note-body">'+
+        '<div class="note-name">'+n.name+'</div>'+
+        '<div class="note-meta">'+(n.vintage?n.vintage+' ':'')+' '+(n.region||'')+'</div>'+
+        '<div class="note-tags">'+
+          '<span class="ntag" style="'+typeStyle(n.type)+'">'+n.type+'</span>'+
+          (n.price?'<span class="ntag" style="background:#f5f5f5;color:#888;">'+n.price+'</span>':'')+
+        '</div>'+
+        (arStr?'<div class="note-aroma">'+arStr+'</div>':'')+
+      '</div>'+
+      '<div class="note-right">'+
+        '<div class="note-stars">'+starsStr(n.star)+'</div>'+
+        (n.date?'<div class="note-date">'+n.date+'</div>':'')+
+      '</div>'+
+    '</div>';
+  });
+  html+='</div>';
+  body.innerHTML=html;
+}
 
+// ─── 詳細ページ ────────────────────────────────────────────
+function openDetail(id) {
+  viewingId=id;
+  var n=DB.find(function(x){return x.id===id;});
+  if(!n) return;
+  document.getElementById('d-hdr-name').textContent=n.name;
+
+  var palateRows=[['甘み',n.sweet],['酸味',n.acid],['タンニン',n.tannin],['アルコール感',n.alcFeel],['ボディ',n.body],['フレーバーの強さ',n.flavorInt],['余韻',n.finish]];
+  var palate=palateRows.filter(function(r){return r[1];}).map(function(r){
+    return '<div class="d-row"><span class="d-row-lbl">'+r[0]+'</span><span class="d-row-val">'+r[1]+'</span></div>';
+  }).join('');
+
+  var appRows=[['色',n.colorName],['色調',n.hue],['濃淡',n.depth],['清澄度',n.clarity],['輝き',n.luster],['粘性',n.viscosity],['外観の印象',n.appImpression]];
+  var appearance=appRows.filter(function(r){return r[1];}).map(function(r){
+    return '<div class="d-row"><span class="d-row-lbl">'+r[0]+'</span><span class="d-row-val">'+r[1]+'</span></div>';
+  }).join('');
+
+  var infoRows=[['生産者',n.producer],['国',n.country],['地域',n.region],['品種',n.grape],['ヴィンテージ',n.vintage],['アルコール',n.alc],['価格帯',n.price],['飲んだ日',n.date]];
+  var info=infoRows.filter(function(r){return r[1];}).map(function(r){
+    return '<div class="d-row"><span class="d-row-lbl">'+r[0]+'</span><span class="d-row-val">'+r[1]+'</span></div>';
+  }).join('');
+
+  var aromaChips=(n.aromas&&n.aromas.length)?'<div class="d-chips">'+n.aromas.map(function(a){return '<span class="d-chip">'+a+'</span>';}).join('')+'</div>':'';
+  var flavorChips=(n.flavors&&n.flavors.length)?'<div class="d-chips">'+n.flavors.map(function(a){return '<span class="d-chip">'+a+'</span>';}).join('')+'</div>':'';
+
+  var html='';
+  if(n.photo) html+='<img class="detail-photo" src="'+n.photo+'" />';
+
+  html+=
+    '<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:12px;">'+
+      '<div style="width:6px;min-height:70px;border-radius:4px;flex-shrink:0;background:'+n.colorHex+';"></div>'+
+      '<div style="flex:1;">'+
+        '<div class="detail-wine-name">'+n.name+'</div>'+
+        '<div class="detail-meta">'+(n.vintage?n.vintage+' ':'')+''+(n.region?'· '+n.region:'')+'</div>'+
+        '<div class="d-tags">'+
+          '<span class="ntag" style="'+typeStyle(n.type)+'">'+n.type+'</span>'+
+          (n.quality?'<span class="ntag" style="background:var(--wine-light);color:var(--wine);">'+n.quality+'</span>':'')+
+        '</div>'+
+      '</div>'+
+      '<div style="font-size:20px;color:#c9a830;flex-shrink:0;">'+starsStr(n.star)+'</div>'+
+    '</div>'+
+    (appearance?'<div class="d-sec"><div class="d-sec-title">外観</div>'+appearance+'</div>':'')+
+    (aromaChips?'<div class="d-sec"><div class="d-sec-title">アロマ'+(n.noseInt?' — '+n.noseInt:'')+'</div>'+aromaChips+'</div>':'')+
+    (palate?'<div class="d-sec"><div class="d-sec-title">味わい</div>'+palate+'</div>':'')+
+    (flavorChips?'<div class="d-sec"><div class="d-sec-title">フレーバー</div>'+flavorChips+'</div>':'')+
+    (info?'<div class="d-sec"><div class="d-sec-title">基本情報</div>'+info+'</div>':'')+
+    (n.comment?'<div class="d-sec"><div class="d-sec-title">コメント</div><div style="font-size:13px;line-height:1.7;">'+n.comment+'</div></div>':'');
+
+  document.getElementById('detail-body').innerHTML=html;
+  document.getElementById('detail-body').scrollTop=0;
+  showPage('detail');
+}
+
+// ─── 削除 ─────────────────────────────────────────────────
+function doDelete() {
+  if(!confirm('このノートを削除しますか？')) return;
+  DB=DB.filter(function(n){return n.id!==viewingId;});
+  saveDB();
+  showPage('list');
+}
+
+// ─── フォームリセット ──────────────────────────────────────
+function resetForm() {
+  ['f-name','f-producer','f-country','f-region','f-grape','f-vintage','f-alc','f-comment'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('f-price').value='';
+  document.getElementById('f-date').value='';
+  document.querySelectorAll('#page-form .seg-btn').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('#page-form .chip').forEach(function(c){c.classList.remove('on');});
+  document.querySelectorAll('#qbtns .q-btn').forEach(function(b){b.classList.remove('on');});
+  document.querySelectorAll('.cc-dot').forEach(function(d){d.classList.remove('on');});
+  currentStar=3; currentColorHex='#8B1A2A'; currentColorName='ガーネット'; currentPhotoData=null;
+  document.querySelectorAll('#stars .star').forEach(function(s,i){s.classList.toggle('on',i<3);});
+  document.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===0);});
+  document.querySelectorAll('.screen').forEach(function(s,i){s.classList.toggle('on',i===0);});
+  removePhoto();
+}
+
+// ─── フォームを開く ────────────────────────────────────────
+function openForm(id) {
+  editingId=id;
+  resetForm();
+  document.getElementById('form-pg-title').textContent=id?'ノートを編集':'新しいノート';
+
+  if(id){
+    var n=DB.find(function(x){return x.id===id;});
+    if(!n) return;
+    var sv=function(fid,v){var el=document.getElementById(fid);if(el&&v!=null)el.value=v;};
+    sv('f-name',n.name);sv('f-producer',n.producer);sv('f-country',n.country);
+    sv('f-region',n.region);sv('f-grape',n.grape);sv('f-vintage',n.vintage);
+    sv('f-alc',n.alc);sv('f-comment',n.comment);sv('f-date',n.date);
+    if(n.price) document.getElementById('f-price').value=n.price;
+
+    if(n.photo){
+      currentPhotoData=n.photo;
+      document.getElementById('photo-placeholder').style.display='none';
+      var prev=document.getElementById('photo-preview');
+      prev.src=n.photo; prev.style.display='block';
+      document.getElementById('photo-remove').style.display='flex';
+    }
+
+    currentStar=n.star||3; currentColorHex=n.colorHex||'#8B1A2A'; currentColorName=n.colorName||'ガーネット';
+    document.querySelectorAll('#stars .star').forEach(function(s,i){s.classList.toggle('on',i<currentStar);});
+    var ccdot=document.getElementById('cc-'+currentColorName);if(ccdot)ccdot.classList.add('on');
+
+    setSegVal('sg-appint',n.appInt);setSegVal('sg-hue',n.hue);setSegVal('sg-depth',n.depth);
+    setSegVal('sg-clarity',n.clarity);setSegVal('sg-luster',n.luster);setSegVal('sg-viscosity',n.viscosity);
+    setSegVal('sg-appimpression',n.appImpression);setSegVal('sg-noseint',n.noseInt);
+    setSegVal('sg-sweet',n.sweet);setSegVal('sg-acid',n.acid);setSegVal('sg-tannin',n.tannin);
+    setSegVal('sg-alcfeel',n.alcFeel);setSegVal('sg-body',n.body);
+    setSegVal('sg-flavorint',n.flavorInt);setSegVal('sg-finish',n.finish);
+    setQVal(n.quality);
+    setChips('aroma',n.aromas);
+    setChips('flavor',n.flavors);
+  }
+  showPage('form');
+}
+
+// ─── 保存 ─────────────────────────────────────────────────
+function saveNote() {
+  var name=(document.getElementById('f-name').value||'').trim();
+  if(!name){alert('ワイン名を入力してください');return;}
+  var qel=document.querySelector('#qbtns .q-btn.on');
+  var cn=currentColorName;
+  var type=( cn==='白'||cn==='黄金')?'白': cn==='ロゼ'?'ロゼ': cn==='スパークリング'?'スパークリング':'赤';
+
+  var obj={
+    id:editingId||Date.now(),
+    name:name,
+    producer:document.getElementById('f-producer').value.trim(),
+    country:document.getElementById('f-country').value.trim(),
+    region:document.getElementById('f-region').value.trim(),
+    grape:document.getElementById('f-grape').value.trim(),
+    vintage:document.getElementById('f-vintage').value.trim(),
+    alc:document.getElementById('f-alc').value.trim(),
+    price:document.getElementById('f-price').value,
+    date:document.getElementById('f-date').value,
+    colorHex:currentColorHex, colorName:currentColorName, type:type,
+    photo:currentPhotoData,
+    appInt:segVal('sg-appint'), hue:segVal('sg-hue'), depth:segVal('sg-depth'),
+    clarity:segVal('sg-clarity'), luster:segVal('sg-luster'), viscosity:segVal('sg-viscosity'),
+    appImpression:segVal('sg-appimpression'),
+    noseInt:segVal('sg-noseint'),
+    sweet:segVal('sg-sweet'), acid:segVal('sg-acid'), tannin:segVal('sg-tannin'),
+    alcFeel:segVal('sg-alcfeel'), body:segVal('sg-body'),
+    flavorInt:segVal('sg-flavorint'), finish:segVal('sg-finish'),
+    aromas:getChips('aroma'), flavors:getChips('flavor'),
+    star:currentStar,
+    quality:qel?qel.textContent.trim():'',
+    comment:document.getElementById('f-comment').value.trim()
+  };
+
+  if(editingId){
+    var idx=DB.findIndex(function(x){return x.id===editingId;});
+    if(idx>=0) DB[idx]=obj; else DB.unshift(obj);
+  } else {
+    DB.unshift(obj);
+  }
+  saveDB();
+  viewingId=obj.id;
+  openDetail(obj.id);
+}
+
+// ─── 初期化 ───────────────────────────────────────────────
+loadDB();
+renderList();
+setupPWA();
+
+// ─── PWA セットアップ ─────────────────────────────────────
+function setupPWA() {
+  // スタンドアロンでなければ「ホーム画面に追加」ボタンを表示
+  if (!window.navigator.standalone) {
+    var btn = document.getElementById('install-btn');
+    if (btn) btn.style.display = '';
+  }
+
+  // アイコンをcanvasで生成してapple-touch-iconとmanifestに設定
+  try {
+    var canvas = document.createElement('canvas');
+    canvas.width = 180; canvas.height = 180;
+    var ctx = canvas.getContext('2d');
+
+    // 角丸背景
+    ctx.fillStyle = '#8B1A2A';
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 180, 180, 36);
+    ctx.fill();
+
+    // ワイングラスシルエット（パス描画）
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.beginPath();
+    ctx.moveTo(62, 32); ctx.lineTo(118, 32);
+    ctx.quadraticCurveTo(124, 72, 98, 92);
+    ctx.lineTo(94, 128); ctx.lineTo(108, 128);
+    ctx.lineTo(108, 138); ctx.lineTo(72, 138);
+    ctx.lineTo(72, 128); ctx.lineTo(86, 128);
+    ctx.lineTo(82, 92);
+    ctx.quadraticCurveTo(56, 72, 62, 32);
+    ctx.closePath();
+    ctx.fill();
+
+    // グラス内のワイン色
+    ctx.fillStyle = 'rgba(139,26,42,0.45)';
+    ctx.beginPath();
+    ctx.moveTo(68, 68); ctx.lineTo(112, 68);
+    ctx.quadraticCurveTo(116, 82, 98, 92);
+    ctx.lineTo(82, 92);
+    ctx.quadraticCurveTo(64, 82, 68, 68);
+    ctx.closePath();
+    ctx.fill();
+
+    var iconData = canvas.toDataURL('image/png');
+
+    // apple-touch-icon
+    var link = document.querySelector('link[rel="apple-touch-icon"]') || document.createElement('link');
+    link.rel = 'apple-touch-icon';
+    link.href = iconData;
+    document.head.appendChild(link);
+
+    // Web App Manifest（Android Chrome / PWA対応）
+    var manifest = {
+      name: 'Cava テイスティングノート',
+      short_name: 'Cava',
+      start_url: './',
+      display: 'standalone',
+      background_color: '#ffffff',
+      theme_color: '#8B1A2A',
+      icons: [{ src: iconData, sizes: '180x180', type: 'image/png' }]
+    };
+    var mLink = document.querySelector('link[rel="manifest"]') || document.createElement('link');
+    mLink.rel = 'manifest';
+    mLink.href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
+    document.head.appendChild(mLink);
+  } catch(e) {}
+}
+
+function showInstallGuide() {
+  document.getElementById('install-overlay').classList.add('on');
+}
+
+// ─── ワイン情報検索（Wikidata） ───────────────────────────
+function openWineSearch() {
+  document.getElementById('ws-overlay').classList.add('on');
+  var name = (document.getElementById('f-name').value || '').trim();
+  if (name) {
+    doSearchWine(name);
+  } else {
+    document.getElementById('ws-body').innerHTML =
+      '<div style="text-align:center;padding:40px 20px;color:var(--text2);font-size:13px;line-height:1.8;">ワイン名を入力してから<br>🔍 検索ボタンを押してください</div>';
+  }
+}
+
+function closeWineSearch() {
+  document.getElementById('ws-overlay').classList.remove('on');
+}
+
+function openGoogleWineSearch() {
+  var name = (document.getElementById('f-name').value || '').trim();
+  var q = name ? name + ' ワイン 産地 生産者 品種' : 'ワイン検索';
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(q), '_blank');
+}
+
+async function wdSearchLang(query, lang) {
+  try {
+    var r = await fetch('https://www.wikidata.org/w/api.php?' + new URLSearchParams({
+      action: 'wbsearchentities', search: query, language: lang, uselang: 'ja',
+      format: 'json', origin: '*', limit: 6, type: 'item'
+    }));
+    return (await r.json()).search || [];
+  } catch(e) { return []; }
+}
+
+async function doSearchWine(name) {
+  document.getElementById('ws-body').innerHTML =
+    '<div style="text-align:center;padding:40px 20px;color:var(--text2);font-size:13px;">🔍 検索中...</div>';
+  try {
+    // ヴィンテージ年を除去して検索精度を上げる
+    var cleanName = name.replace(/\s*(18|19|20)\d{2}\s*/g, ' ').trim();
+
+    // 日本語・英語を並列検索して重複除去
+    var [jaHits, enHits] = await Promise.all([
+      wdSearchLang(cleanName, 'ja'),
+      wdSearchLang(cleanName, 'en')
+    ]);
+    var seen = new Set();
+    var allHits = [...jaHits, ...enHits].filter(function(r) {
+      if (seen.has(r.id)) return false;
+      seen.add(r.id); return true;
+    });
+    if (!allHits.length) { renderWsNoResult(name); return; }
+
+    var searchData = { search: allHits };
+    var ids = allHits.slice(0, 8).map(function(e) { return e.id; }).join('|');
+    var entityRes = await fetch('https://www.wikidata.org/w/api.php?' + new URLSearchParams({
+      action: 'wbgetentities', ids: ids, languages: 'ja|en',
+      props: 'labels|descriptions|claims', format: 'json', origin: '*'
+    }));
+    var entityData = await entityRes.json();
+
+    // QIDラベルを一括解決
+    var qidSet = new Set();
+    Object.values(entityData.entities).forEach(function(e) {
+      ['P495','P17','P131','P176','P127','P186','P31'].forEach(function(prop) {
+        ((e.claims || {})[prop] || []).forEach(function(c) {
+          var dv = c.mainsnak && c.mainsnak.datavalue;
+          if (dv && dv.type === 'wikibase-entityid') qidSet.add(dv.value.id);
+        });
+      });
+    });
+
+    var labelMap = {};
+    if (qidSet.size) {
+      var lblRes = await fetch('https://www.wikidata.org/w/api.php?' + new URLSearchParams({
+        action: 'wbgetentities', ids: [...qidSet].slice(0, 50).join('|'),
+        languages: 'ja|en', props: 'labels', format: 'json', origin: '*'
+      }));
+      var lblData = await lblRes.json();
+      Object.entries(lblData.entities).forEach(function([id, e]) {
+        var l = e.labels;
+        if (l) labelMap[id] = (l.ja || l.en || {}).value || id;
+      });
+    }
+
+    // 生産者エンティティ判定用
+    var PRODUCER_TYPES = ['Q4287745','Q13221722','Q3209699','Q783106','Q1268980','Q66683562','Q2095','Q22687'];
+
+    var results = [];
+    searchData.search.forEach(function(s) {
+      var e = entityData.entities[s.id];
+      if (!e) return;
+
+      function cLabel(prop) {
+        var cs = (e.claims || {})[prop];
+        if (!cs || !cs[0]) return '';
+        var dv = cs[0].mainsnak && cs[0].mainsnak.datavalue;
+        if (!dv) return '';
+        if (dv.type === 'wikibase-entityid') return labelMap[dv.value.id] || '';
+        if (dv.type === 'string') return dv.value;
+        return '';
+      }
+      function eLabel() {
+        var l = e.labels;
+        if (!l) return s.label || '';
+        return (l.ja || l.en || {}).value || s.label || '';
+      }
+      function eDesc() {
+        var d = e.descriptions;
+        if (!d) return s.description || '';
+        return (d.ja || d.en || {}).value || s.description || '';
+      }
+
+      var instanceIds = ((e.claims || {}).P31 || []).map(function(c) {
+        var dv = c.mainsnak && c.mainsnak.datavalue;
+        return (dv && dv.type === 'wikibase-entityid') ? dv.value.id : null;
+      }).filter(Boolean);
+      var isProducer = instanceIds.some(function(id) { return PRODUCER_TYPES.indexOf(id) >= 0; });
+
+      var label = eLabel();
+      var country = cLabel('P495') || cLabel('P17');
+      var region  = cLabel('P131');
+      var producer = isProducer ? label : (cLabel('P176') || cLabel('P127'));
+      var grape   = cLabel('P186');
+
+      if (country || region || producer || grape) {
+        results.push({ label: label, desc: eDesc(), country: country, region: region, producer: producer, grape: grape });
+      }
+    });
+
+    if (!results.length) { renderWsNoResult(name); return; }
+
+    var html = '<div style="font-size:11px;color:var(--text2);margin-bottom:10px;">候補をタップすると自動入力されます</div>';
+    results.forEach(function(r, i) {
+      var tags = [];
+      if (r.country)  tags.push('🌍 ' + r.country);
+      if (r.region)   tags.push('📍 ' + r.region);
+      if (r.producer) tags.push('🏭 ' + r.producer);
+      if (r.grape)    tags.push('🍇 ' + r.grape);
+      html += '<div class="ws-card" onclick="applyWsResult(' + i + ')">' +
+        '<div class="ws-card-name">' + wsEsc(r.label) + '</div>' +
+        (r.desc ? '<div class="ws-card-desc">' + wsEsc(r.desc.substring(0,80)) + (r.desc.length>80?'…':'') + '</div>' : '') +
+        '<div class="ws-tags">' + tags.map(function(t){return '<span class="ws-tag">'+wsEsc(t)+'</span>';}).join('') + '</div>' +
+        '</div>';
+    });
+    document.getElementById('ws-body').innerHTML = html;
+    window._wsResults = results;
+
+  } catch(err) {
+    document.getElementById('ws-body').innerHTML =
+      '<div style="text-align:center;padding:40px 20px;color:var(--text2);font-size:13px;">❌ 検索エラーが発生しました。<br>Googleで検索してみてください。</div>';
+  }
+}
+
+function renderWsNoResult(name) {
+  document.getElementById('ws-body').innerHTML =
+    '<div style="text-align:center;padding:40px 20px;color:var(--text2);font-size:13px;line-height:1.8;">「' + wsEsc(name) + '」の情報が<br>見つかりませんでした。<br>Googleで検索してみてください。</div>';
+}
+
+function applyWsResult(idx) {
+  var r = (window._wsResults || [])[idx];
+  if (!r) return;
+  if (r.country)  document.getElementById('f-country').value  = r.country;
+  if (r.region)   document.getElementById('f-region').value   = r.region;
+  if (r.producer) document.getElementById('f-producer').value = r.producer;
+  if (r.grape)    document.getElementById('f-grape').value    = r.grape;
+  if (r.label && !document.getElementById('f-name').value.trim()) {
+    document.getElementById('f-name').value = r.label;
+  }
+  closeWineSearch();
+}
+
+function wsEsc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── Google Lensで写真検索 ────────────────────────────────
+function openLensSearch() {
+  if (currentPhotoData) {
+    var a = document.createElement('a');
+    a.href = currentPhotoData;
+    a.download = 'wine-label.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() {
+      window.open('https://lens.google.com', '_blank');
+    }, 400);
+    setTimeout(function() {
+      alert('ラベル写真をダウンロードしました。\n\nGoogle Lensが開いたら右上の📷アイコンから\nダウンロードした写真をアップロードしてください。');
+    }, 800);
+  } else {
+    window.open('https://lens.google.com', '_blank');
+  }
+}
+</script>
 </body>
 </html>
