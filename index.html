@@ -183,6 +183,13 @@ input[type=file]{display:none;}
 .import-merge-btn{background:var(--wine);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;font-weight:500;}
 .import-replace-btn{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:13px;font-size:14px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;color:var(--text);}
 .import-cancel-btn{background:none;border:none;padding:10px;font-size:13px;font-family:'Noto Sans JP',sans-serif;cursor:pointer;color:var(--text2);}
+/* CLOUD SYNC */
+.sync-status{font-size:11px;display:flex;align-items:center;gap:4px;color:var(--text2);}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .3s;}
+.sync-dot.ok{background:#34c759;}
+.sync-dot.syncing{background:#ff9500;animation:pulse .8s infinite alternate;}
+.sync-dot.error{background:#ff3b30;}
+@keyframes pulse{from{opacity:1}to{opacity:.3}}
 </style>
 </head>
 <body>
@@ -193,7 +200,10 @@ input[type=file]{display:none;}
   <div class="list-hdr">
     <div class="list-hdr-row">
       <div class="list-title">🍷 Cava</div>
-      <button class="install-btn" id="install-btn" onclick="showInstallGuide()" style="display:none;">📲 ホーム画面に追加</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="sync-status" id="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-label">--</span></div>
+        <button class="install-btn" id="install-btn" onclick="showInstallGuide()" style="display:none;">📲 ホーム画面に追加</button>
+      </div>
     </div>
     <div class="search-bar">
       <span style="color:var(--text2);">🔍</span>
@@ -673,14 +683,56 @@ input[type=file]{display:none;}
 var STORAGE_KEY = 'cava_notes_v1';
 var DB = [];
 
+var FB_URL = 'https://cava-wine-d16e9-default-rtdb.asia-southeast1.firebasedatabase.app';
+
+function setSyncStatus(state, label) {
+  var dot = document.getElementById('sync-dot');
+  var lbl = document.getElementById('sync-label');
+  if (!dot) return;
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = label || (state === 'ok' ? '同期済み' : state === 'syncing' ? '同期中...' : 'オフライン');
+}
+
 function loadDB() {
   try {
     var raw = localStorage.getItem(STORAGE_KEY);
     DB = raw ? JSON.parse(raw) : [];
   } catch(e) { DB = []; }
 }
+
 function saveDB() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); } catch(e) {}
+  syncToCloud();
+}
+
+async function syncToCloud() {
+  setSyncStatus('syncing');
+  try {
+    await fetch(FB_URL + '/notes.json', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(DB)
+    });
+    setSyncStatus('ok');
+  } catch(e) {
+    setSyncStatus('error', 'オフライン');
+  }
+}
+
+async function syncFromCloud() {
+  setSyncStatus('syncing');
+  try {
+    var res = await fetch(FB_URL + '/notes.json');
+    var data = await res.json();
+    if (Array.isArray(data) && data.length > 0) {
+      DB = data;
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(DB)); } catch(e) {}
+      renderList();
+    }
+    setSyncStatus('ok');
+  } catch(e) {
+    setSyncStatus('error', 'オフライン');
+  }
 }
 
 var currentFilter='all', editingId=null, viewingId=null, currentStar=3;
@@ -1012,6 +1064,7 @@ function saveNote() {
 loadDB();
 renderList();
 setupPWA();
+syncFromCloud();
 
 // ─── データ書き出し／読み込み ─────────────────────────────
 function exportData() {
